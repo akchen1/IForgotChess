@@ -55,13 +55,13 @@ def make_board():
     return(dc)
 
 dc = make_board()
-p1 = EUP.pawn(dc['G1'], display)
+p1 = EUP.pawn(dc['G1'])
 pygame.display.flip()
 pygame.display.update()
 
 while True:
     move = input('move where: ')
-    p1.move(dc[move], display)
+    p1.move(dc[move])
     pygame.display.flip()
     pygame.display.update()    
 
