@@ -6,8 +6,8 @@ pygame.mixer.init()
 
 WHITE = (232, 235, 239)
 BLACK = (125, 135, 150)
-HEIGHT = 1444
-WIDTH = 1444
+HEIGHT = 644
+WIDTH = 644
 
 display = pygame.display.set_mode((HEIGHT, WIDTH))
 
@@ -15,7 +15,7 @@ display = pygame.display.set_mode((HEIGHT, WIDTH))
 class tile:
     def __init__(self, colour, x_pos, y_pos):
         self.full = False
-        self.piece = None
+        self.piece = empty()
         self.colour = colour
         self.x_pos = x_pos
         self.y_pos = y_pos
@@ -23,13 +23,17 @@ class tile:
         
     def draw_tile(self):
         pygame.draw.rect(display, self.colour, self.rect) # (x,y,xsize,ysize)
-    
+
+class empty:
+    def updatep(self, new_tile):
+        pass
+
 
 class pawn(pygame.sprite.Sprite):
     def __init__(self, tile):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('pawn1.png').convert()
-        #self.image = pygame.transform.scale(self.image, (100,125))
+        self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
         self.image.set_colorkey([255,255,255])
         self.rect = self.image.get_rect()
         self.tile = tile
@@ -38,16 +42,16 @@ class pawn(pygame.sprite.Sprite):
     def set_position(self):
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
-        self.tile.piece = 'pawn' 
+        self.tile.piece = self 
         
     def updatep(self, new_tile):
         self.rect.x = new_tile.x_pos
         self.rect.y = new_tile.y_pos
         self.tile.full = False
-        self.tile.piece = None
+        self.tile.piece = empty()
         self.tile = new_tile
         self.tile.full = True
-        self.tile.piece = 'pawn'
+        self.tile.piece = self
         
     def movement(self): #not done
         if self.first_move == 0:
@@ -115,9 +119,12 @@ clock = pygame.time.Clock()
 board = board() # initialize board
 all_sprites = pygame.sprite.Group()
 p1 = pawn(board.dc["G1"])
+p2 = pawn(board.dc["A1"])
 all_sprites.add(p1)
+all_sprites.add(p2)
 running = True
 p1.set_position()
+p2.set_position()
 while running:
     clock.tick(fps)
     board.draw_board()
@@ -126,24 +133,29 @@ while running:
     pygame.display.update() 
     pygame.display.flip()
     for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False 
-            if event.type == pygame.MOUSEBUTTONDOWN: # click on piece
-                mouse_pos = pygame.mouse.get_pos() # get piece location
-                found, key, tile = find_tile(board, mouse_pos)  # find corresponding tile
-                if found:
-                    if tile.full == True: # is something on the tile
-                        if tile.piece == 'pawn': # is it a pawn
-                            wait_button()   # wait for input for new location
-                            new_mouse_pos = pygame.mouse.get_pos()  # get location
-                            found, new_key, new_tile = find_tile(board, new_mouse_pos)  # does the tile exist
-                            if found:
-                                #allowed_x, allowed_y = p1.movement()
-                                #if new_tile.x_pos < tile.x_pos and new_tile.x_pos > allowed_x:
-                                p1.updatep(board.dc[new_key])   # move to new tile
-                    else:
-                        print('empty')
-                            
+        if event.type == pygame.QUIT:
+            running = False 
+        if event.type == pygame.MOUSEBUTTONDOWN: # click on piece
+            mouse_pos = pygame.mouse.get_pos() # get piece location
+            found, key, tile = find_tile(board, mouse_pos)  # find corresponding tile
+            if found:
+                wait_button()   # wait for input for new location
+                new_mouse_pos = pygame.mouse.get_pos()
+                found, new_key, new_tile = find_tile(board, new_mouse_pos)
+                if found: 
+                    tile.piece.updatep(board.dc[new_key])
+                # if tile.full == True: # is something on the tile
+                #    if tile.piece == 'pawn': # is it a pawn
+                    #       wait_button()   # wait for input for new location
+                    #      new_mouse_pos = pygame.mouse.get_pos()  # get location
+                    #     found, new_key, new_tile = find_tile(board, new_mouse_pos)  # does the tile exist
+                    #    if found:
+                        #       #allowed_x, allowed_y = p1.movement()
+                        #      #if new_tile.x_pos < tile.x_pos and new_tile.x_pos > allowed_x:
+                        #     p1.updatep(board.dc[new_key])   # move to new tile
+                #   else:
+                #      print('empty')
+                        
                 
                 
     
