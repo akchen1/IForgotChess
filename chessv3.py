@@ -1,5 +1,6 @@
 import pygame
 import math
+import numpy as np
 
 pygame.init()
 pygame.mixer.init()
@@ -11,6 +12,15 @@ WIDTH = 644
 
 display = pygame.display.set_mode((HEIGHT, WIDTH))
 import euPieces as EUP
+
+COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
+            ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
+            ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'],
+            ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8'],
+            ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8'],
+            ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8'],
+            ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8'],
+            ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']])
 
 class tile:
     def __init__(self, colour, x_pos, y_pos):
@@ -26,7 +36,11 @@ class tile:
 
 
 class empty:
+    def __init__(self):
+        self.full = False
     def updatep(self, new_tile):
+        pass
+    def move(self, a, b, c, d):
         pass
         
 class board:
@@ -41,6 +55,8 @@ class board:
                       ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8'],
                       ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']]
         self.make_board()
+    def gimme_dictionary_lmao(self):
+        return self.dc
     
     def make_board(self):
         counter = 1
@@ -84,9 +100,10 @@ def find_tile(board, mouse_pos):
 fps = 30
 clock = pygame.time.Clock()
 board = board() # initialize board
+dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
-p1 = EUP.pawn(board.dc["G1"])
-p2 = EUP.pawn(board.dc["A1"])
+p1 = EUP.pawn(board.dc["G1"], "BLACK")
+p2 = EUP.pawn(board.dc["A1"], "WHITE")
 all_sprites.add(p1)
 all_sprites.add(p2)
 running = True
@@ -110,7 +127,8 @@ while running:
                 new_mouse_pos = pygame.mouse.get_pos()
                 found, new_key, new_tile = find_tile(board, new_mouse_pos)
                 if found: 
-                    tile.piece.updatep(board.dc[new_key])
+                #    tile.piece.updatep(board.dc[new_key])
+                     tile.piece.move(key, tile, new_tile, dc)
                              
     
 pygame.quit()
