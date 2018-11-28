@@ -10,7 +10,7 @@ BLACK = (125, 135, 150)
 HEIGHT = 644
 WIDTH = 644
 
-display = pygame.display.set_mode((HEIGHT, WIDTH))
+display = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
 import euPieces as EUP
 
 COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
@@ -38,6 +38,7 @@ class tile:
 class empty:
     def __init__(self):
         self.full = False
+        self.player = None
     def updatep(self, new_tile):
         pass
     def move(self, a, b, c, d):
@@ -89,21 +90,26 @@ def wait_button():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 return(True)
             
-def find_tile(board, mouse_pos):
+def find_tile(board, mouse_pos, tile_flag):
+    ''' find tile will find the corresponding tile to mouse_pos, if it's the first
+    iteration, the tile_flag will be on so that if an empty space is clicked, it will
+    stop the loop and allow player to try again '''
     for key, tile in board.dc.items():
         if mouse_pos[1] > tile.y_pos and mouse_pos[1] < (tile.y_pos + HEIGHT/8):
             if mouse_pos[0] > tile.x_pos and mouse_pos[0] < (tile.x_pos + WIDTH/8):
+                if tile.piece.player == None and tile_flag: 
+                    return(False, None, None)
                 return(True, key, tile)
     return(False, None, None)
 
-            
+tile_flag = 1 
 fps = 30
 clock = pygame.time.Clock()
 board = board() # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
-p1 = EUP.pawn(board.dc["G1"], "BLACK")
-p2 = EUP.pawn(board.dc["A1"], "WHITE")
+p1 = EUP.pawn(board.dc["A2"], "BLACK")
+p2 = EUP.pawn(board.dc["F1"], "WHITE")
 all_sprites.add(p1)
 all_sprites.add(p2)
 running = True
@@ -121,11 +127,11 @@ while running:
             running = False 
         if event.type == pygame.MOUSEBUTTONDOWN: # click on piece
             mouse_pos = pygame.mouse.get_pos() # get piece location
-            found, key, tile = find_tile(board, mouse_pos)  # find corresponding tile
+            found, key, tile = find_tile(board, mouse_pos, tile_flag)  # find corresponding tile
             if found:
                 wait_button()   # wait for input for new location
                 new_mouse_pos = pygame.mouse.get_pos()
-                found, new_key, new_tile = find_tile(board, new_mouse_pos)
+                found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
                 if found: 
                 #    tile.piece.updatep(board.dc[new_key])
                      tile.piece.move(key, tile, new_tile, dc)
