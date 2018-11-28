@@ -108,13 +108,17 @@ clock = pygame.time.Clock()
 board = board() # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
-p1 = EUP.pawn(board.dc["A2"], "BLACK")
-p2 = EUP.pawn(board.dc["F1"], "WHITE")
-all_sprites.add(p1)
+b1 = EUP.bishop(board.dc["A6"], "WHITE")
+p1 = EUP.pawn(board.dc["A1"], "BLACK")
+p3 = EUP.pawn(board.dc["A3"], "BLACK")
+p2 = EUP.pawn(board.dc["F2"], "WHITE")
+all_sprites.add(p1, p3, b1)
 all_sprites.add(p2)
 running = True
+b1.set_position()
 p1.set_position()
 p2.set_position()
+p3.set_position()
 while running:
     clock.tick(fps)
     board.draw_board()
@@ -129,14 +133,15 @@ while running:
             mouse_pos = pygame.mouse.get_pos() # get piece location
             found, key, tile = find_tile(board, mouse_pos, tile_flag)  # find corresponding tile
             if found:
+                tile.piece.highlight(key, tile, dc)
                 wait_button()   # wait for input for new location
                 new_mouse_pos = pygame.mouse.get_pos()
                 found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
                 if found: 
+                    tile.piece.move(new_tile)
                 #    tile.piece.updatep(board.dc[new_key])
-                     tile.piece.move(key, tile, new_tile, dc)
+                     
                              
-    
 pygame.quit()
 
 

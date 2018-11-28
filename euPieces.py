@@ -36,16 +36,19 @@ class pawn(pygame.sprite.Sprite):
             self.image = pygame.image.load('pawnW.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
            # self.image.set_colorkey([0,0,0])
-
+        
         self.rect = self.image.get_rect()
         self.tile = tile
+        self.available_moves = []
         self.first_move = True
         self.player = player
+        pass
         
     def set_position(self):
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
+        pass
         
     def updatep(self, new_tile):
         if new_tile.full:
@@ -57,86 +60,239 @@ class pawn(pygame.sprite.Sprite):
         self.tile = new_tile
         self.tile.full = True
         self.tile.piece = self
-
-    def black_able():
         pass
-    def black_move(self, key, tile, new_tile, dc):
+
+    def black_able(self, key, dc):
         """ reciprocal of white movement """
         """ moves down """
+        self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
         for k in range(1,3):
             try:
                 trial_tile = dc[COORD_ID[i+1,j+(-1)**k].item(0)]  
-                if trial_tile.full == True:
-                    self.avaliable_moves.append(trial_tile)
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
             except:
                 continue
         if self.first_move:
             for k in range(1,3):
                 trial_tile = dc[COORD_ID[i+k,j].item(0)]    # possible tile for it to move
                 if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.avaliable_moves.append(trial_tile)
+                    self.available_moves.append(trial_tile)
         else:
             trial_tile = dc[COORD_ID[i+1,j].item(0)]   
             if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.avaliable_moves.append(trial_tile)
+                    self.available_moves.append(trial_tile)
+        pass
 
-        if self.avaliable_moves == []:  # no moves then pass
-            pass
-        if new_tile in self.avaliable_moves:    # moves then use update on trial_tile
-            self.updatep(new_tile)
-            self.first_move = False
-            pass
-
-    def white_move(self, key, tile, new_tile, dc):
+    def white_able(self, key, dc):
+        """ reciprocal of black movement """
+        self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
         for k in range(1,3):
             try:
                 trial_tile = dc[COORD_ID[i-1,j+(-1)**k].item(0)]  
-                if trial_tile.full == True:
-                    self.avaliable_moves.append(trial_tile)
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
             except:
                 continue
         if self.first_move:
             for k in range(1,3):
                 trial_tile = dc[COORD_ID[i-k,j].item(0)]    # possible tile for it to move
                 if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.avaliable_moves.append(trial_tile)
+                    self.available_moves.append(trial_tile)
         else:
             trial_tile = dc[COORD_ID[i-1,j].item(0)]   
             if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.avaliable_moves.append(trial_tile)
-
-        if self.avaliable_moves == []:  # no moves then pass
-            pass
-        if new_tile in self.avaliable_moves:    # moves then use update on trial_tile
-            self.updatep(new_tile)
-            self.first_move = False
-            pass
-
-    def move(self, key, tile, new_tile, dc):
-        """ lol this script is gross """
-        self.avaliable_moves = [] 
-        if tile.piece.player == "BLACK":
-            self.black_move(key, tile, new_tile, dc)
-        else: 
-            self.white_move(key, tile, new_tile, dc)
-            self.highlight()
-     #       pygame.display.update()
-    #        pygame.time.delay(100000)
+                    self.available_moves.append(trial_tile)
         pass
 
-    def highlight(self):
-        """ working on highlighting moves """
-        for i in self.avaliable_moves: 
-            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            self.updatep(new_tile)
+            self.first_move = False
+        pass
 
-        
-    def movement(self): #not done
-        if self.first_move == 0:
-            x, y = self.tile.x_pos - WIDTH/4, self.tile.y_pos
-            self.first_move = 1
-            return(x, y)
+    def highlight(self, key, tile, dc):
+        if tile.piece.player == "BLACK":
+            self.black_able(key, dc)
         else:
-            x, y = self.tile.x_pos - WIDTH/8, self.tile.y_pos
-            return(x, y)
+            self.white_able(key, dc)
+        for i in self.available_moves: 
+            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+
+class bishop(pygame.sprite.Sprite):
+    def __init__(self, tile, player):
+        pygame.sprite.Sprite.__init__(self)
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('bishopB.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+         #   self.image.set_colorkey([255,255,255])
+        else:
+            self.image = pygame.image.load('bishopW.jpg').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+          #  self.image.set_colorkey([255,255,255])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        self.rect.x = new_tile.x_pos
+        self.rect.y = new_tile.y_pos
+        self.tile.full = False
+        self.tile.piece = empty()
+        self.tile = new_tile
+        self.tile.full = True
+        self.tile.piece = self
+        pass
+
+    def black_able(self, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+
+        # down-right diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up-right diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up-left diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # down-left
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+            
+    def white_able(self, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+
+        # down-right diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up-right diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up-left diagonal
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # down-left
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        pass
+
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            self.updatep(new_tile)
+            self.first_move = False
+        pass
+
+    def highlight(self, key, tile, dc):
+        if tile.piece.player == "BLACK":
+            self.black_able(key, dc)
+        else:
+            self.white_able(key, dc)
+        for i in self.available_moves: 
+            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
