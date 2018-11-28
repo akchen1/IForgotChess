@@ -40,6 +40,8 @@ class pawn(pygame.sprite.Sprite):
         self.tile.piece = self 
         
     def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
         self.rect.x = new_tile.x_pos
         self.rect.y = new_tile.y_pos
         self.tile.full = False
