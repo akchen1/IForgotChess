@@ -119,7 +119,11 @@ class pawn(pygame.sprite.Sprite):
         else:
             self.white_able(key, dc)
         for i in self.available_moves: 
-            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
 
@@ -293,6 +297,10 @@ class bishop(pygame.sprite.Sprite):
         else:
             self.white_able(key, dc)
         for i in self.available_moves: 
-            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
