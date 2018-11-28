@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 pygame.init()
 WIDTH, HEIGHT = pygame.display.get_surface().get_size()
+display = pygame.display.get_surface()
 
 COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
             ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
@@ -57,6 +58,8 @@ class pawn(pygame.sprite.Sprite):
         self.tile.full = True
         self.tile.piece = self
 
+    def black_able():
+        pass
     def black_move(self, key, tile, new_tile, dc):
         """ reciprocal of white movement """
         """ moves down """
@@ -87,6 +90,13 @@ class pawn(pygame.sprite.Sprite):
 
     def white_move(self, key, tile, new_tile, dc):
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+        for k in range(1,3):
+            try:
+                trial_tile = dc[COORD_ID[i-1,j+(-1)**k].item(0)]  
+                if trial_tile.full == True:
+                    self.avaliable_moves.append(trial_tile)
+            except:
+                continue
         if self.first_move:
             for k in range(1,3):
                 trial_tile = dc[COORD_ID[i-k,j].item(0)]    # possible tile for it to move
@@ -111,14 +121,16 @@ class pawn(pygame.sprite.Sprite):
             self.black_move(key, tile, new_tile, dc)
         else: 
             self.white_move(key, tile, new_tile, dc)
+            self.highlight()
+     #       pygame.display.update()
+    #        pygame.time.delay(100000)
         pass
 
-    def highlight(self, avaliable_moves):
+    def highlight(self):
         """ working on highlighting moves """
-        for i in avaliable_moves: 
-            pass
+        for i in self.avaliable_moves: 
+            pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
 
-        
         
     def movement(self): #not done
         if self.first_move == 0:
