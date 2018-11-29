@@ -53,11 +53,11 @@ class pawn(pygame.sprite.Sprite):
         pass
         
     def updatep(self, new_tile):
+        
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -65,8 +65,17 @@ class pawn(pygame.sprite.Sprite):
             self.tile.piece = empty()
             self.tile = new_tile
             self.tile.full = True
-            self.tile.piece = self
-            return True
+            promoted, new_piece = self.promotion()
+            if promoted:
+                self.kill()
+                command = '{}(self.tile, self.player)'
+                command = command.format(new_piece)
+                self.tile.piece = eval(command)
+                #self.tile.piece = queen(self.tile, "WHITE")
+                return(True, True, self.tile.piece)
+            else:
+                self.tile.piece = self
+            return(True, False, False)
         pass
 
     def moveset(self, player, enemy, key, dc):
@@ -104,11 +113,12 @@ class pawn(pygame.sprite.Sprite):
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
-            self.first_move = False
-            return changed
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False 
+            
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
 
     def highlight(self, key, tile, dc):
@@ -124,6 +134,17 @@ class pawn(pygame.sprite.Sprite):
             #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
+    def promotion(self):
+        if self.player == "WHITE" and self.rect.y == 0:
+            new_class = input("select class: ")
+            return(True, new_class)
+        elif self.player == "BLACK" and self.rect.y == 563:
+            new_class = input("select class: ")
+            return(True, new_class)
+        else:
+            return(False,False)
+    pass
+
 
 class bishop(pygame.sprite.Sprite):
     def __init__(self, tile, player):
@@ -156,8 +177,8 @@ class bishop(pygame.sprite.Sprite):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
+          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -166,7 +187,7 @@ class bishop(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return True
+            return (True, False,False)
         
 
     def moveset(self, player, enemy, key, dc):
@@ -288,11 +309,13 @@ class bishop(pygame.sprite.Sprite):
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
+            changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False
-            return changed
+            
+            
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
 
 
@@ -342,8 +365,8 @@ class rook(pygame.sprite.Sprite):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
+          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -352,7 +375,7 @@ class rook(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return True
+            return (True, False,False)
        
 
     def moveset(self, player, enemy, key, dc):
@@ -416,11 +439,13 @@ class rook(pygame.sprite.Sprite):
         pass
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
+            changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False
-            return changed
+            
+            
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
 
     def highlight(self, key, tile, dc):
@@ -468,8 +493,8 @@ class queen(pygame.sprite.Sprite):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
+          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -478,7 +503,7 @@ class queen(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return True
+            return (True, False,False)
         
 
     def moveset(self, player, enemy, key, dc):
@@ -652,11 +677,12 @@ class queen(pygame.sprite.Sprite):
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
+            changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False
-            return changed
+
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
 
     def highlight(self, key, tile, dc):
@@ -704,8 +730,8 @@ class knight(pygame.sprite.Sprite):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
+          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -714,7 +740,7 @@ class knight(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return True
+            return (True, False,False)
         
 
     def moveset(self, player, enemy, key, dc):
@@ -770,11 +796,13 @@ class knight(pygame.sprite.Sprite):
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
+            changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False
-            return changed
+            
+            
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
     def highlight(self, key, tile, dc):
         if tile.piece.player == "BLACK":
@@ -821,8 +849,8 @@ class king(pygame.sprite.Sprite):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
-            return False
-            pass
+            return(False, False, False)
+          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -831,7 +859,7 @@ class king(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return True
+            return (True, False,False)
         
 
     def moveset(self, player, enemy, key, dc):
@@ -853,11 +881,13 @@ class king(pygame.sprite.Sprite):
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
-            changed = self.updatep(new_tile)
+            changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False
-            return changed
+            
+            
+            return (changed, promoted, new_piece)
         else:
-            return False
+            return (False, False, False)
         pass
     def highlight(self, key, tile, dc):
         if tile.piece.player == "BLACK":

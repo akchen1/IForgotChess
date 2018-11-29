@@ -150,6 +150,7 @@ all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
 all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
 running = True
 white_turn = True
+print(board.dc["A1"].x_pos)
 while running:
     clock.tick(fps)
     board.draw_board()
@@ -170,19 +171,24 @@ while running:
                 new_mouse_pos = pygame.mouse.get_pos()
                 found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
                 if found: 
-                    changed = tile.piece.move(new_tile)
+                    changed, promotion, new_promo = tile.piece.move(new_tile)
                     if changed:
-                
                         white_turn = False
+                        if promotion:
+                            all_sprites.add(new_promo)
+ 
             elif found and tile.piece.player == "BLACK" and not white_turn:
                 tile.piece.highlight(key, tile, dc)
                 wait_button()   # wait for input for new location
                 new_mouse_pos = pygame.mouse.get_pos()
                 found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
-                if found: 
-                    changed = tile.piece.move(new_tile)
+                if found:
+                    changed, promotion, new_promo = tile.piece.move(new_tile)
                     if changed:
-                        white_turn = True         
+                        white_turn = True
+                        if promotion:
+                            all_sprites.add(new_promo)
+                           
                              
 pygame.quit()
 
