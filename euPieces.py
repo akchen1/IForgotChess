@@ -62,51 +62,35 @@ class pawn(pygame.sprite.Sprite):
         self.tile.piece = self
         pass
 
-    def black_able(self, key, dc):
+    def moveset(self, player, enemy, key, dc):
         """ reciprocal of white movement """
         """ moves down """
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
         for k in range(1,3):
+            p = 1
+            if player == "WHITE":
+                p = p * (-1)
             try:
-                trial_tile = dc[COORD_ID[i+1,j+(-1)**k].item(0)]  
-                if trial_tile.piece.player == "WHITE":
+                trial_tile = dc[COORD_ID[i+p,j+(-1)**k].item(0)]  
+                if trial_tile.piece.player == enemy:
                     self.available_moves.append(trial_tile)
             except:
                 continue
         if self.first_move:
             for k in range(1,3):
-                trial_tile = dc[COORD_ID[i+k,j].item(0)]    # possible tile for it to move
+                if player == "WHITE":
+                    p = k*(-1)
+                trial_tile = dc[COORD_ID[i+p,j].item(0)]    # possible tile for it to move
                 if trial_tile.full != True:         # only works for pawn since checks if space above full
                     self.available_moves.append(trial_tile)
                 else:
                     break
         else:
-            trial_tile = dc[COORD_ID[i+1,j].item(0)]   
-            if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
-        pass
-
-    def white_able(self, key, dc):
-        """ reciprocal of black movement """
-        self.available_moves = []
-        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        for k in range(1,3):
-            try:
-                trial_tile = dc[COORD_ID[i-1,j+(-1)**k].item(0)]  
-                if trial_tile.piece.player == "BLACK":
-                    self.available_moves.append(trial_tile)
-            except:
-                continue
-        if self.first_move:
-            for k in range(1,3):
-                trial_tile = dc[COORD_ID[i-k,j].item(0)]    # possible tile for it to move
-                if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
-                else:
-                    break
-        else:
-            trial_tile = dc[COORD_ID[i-1,j].item(0)]   
+            p = 1
+            if player == "WHITE":
+                p = p*(-1)
+            trial_tile = dc[COORD_ID[i+p,j].item(0)]   
             if trial_tile.full != True:         # only works for pawn since checks if space above full
                     self.available_moves.append(trial_tile)
         pass
@@ -119,9 +103,9 @@ class pawn(pygame.sprite.Sprite):
 
     def highlight(self, key, tile, dc):
         if tile.piece.player == "BLACK":
-            self.black_able(key, dc)
+            self.moveset("BLACK", "WHITE", key, dc)
         else:
-            self.white_able(key, dc)
+            self.moveset("WHITE", "BLACK", key, dc)
         for i in self.available_moves: 
             p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
             p.set_alpha(100)    # transparency 
@@ -170,7 +154,7 @@ class bishop(pygame.sprite.Sprite):
         self.tile.piece = self
         pass
 
-    def black_able(self, key, dc):
+    def moveset(self, player, enemy, key, dc):
         """ reciprocal of white movement """
         """ moves down """
         self.available_moves = []
@@ -180,10 +164,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,8-j[0]):
                 try:
                     trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -193,10 +177,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,8-i[0]):
                 try:
                     trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -207,10 +191,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,8-j[0]):
                 try:
                     trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -220,10 +204,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,i[0]+1):
                 try:
                     trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -234,10 +218,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,j[0]+1):
                 try:
                     trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -247,10 +231,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,i[0]+1):
                 try:
                     trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -261,10 +245,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,j[0]+1):
                 try:
                     trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -275,10 +259,10 @@ class bishop(pygame.sprite.Sprite):
             for k in range(1,8-i[0]):
                 try:
                     trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
-                    if trial_tile.piece.player == "WHITE":
+                    if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile)
                         break
-                    elif trial_tile.piece.player == "BLACK": 
+                    elif trial_tile.piece.player == player: 
                         break
                     else: 
                         self.available_moves.append(trial_tile)
@@ -286,122 +270,6 @@ class bishop(pygame.sprite.Sprite):
                     continue
             pass
             
-    def white_able(self, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
-        self.available_moves = []
-        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # down-right diagonal
-        if j[0] >= i[0]:
-            for k in range(1,8-j[0]):
-                try:
-                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        else:
-            for k in range(1,8-i[0]):
-                try:
-                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        # up-right diagonal
-        if 7-j[0] <= i[0]:
-            for k in range(1,8-j[0]):
-                try:
-                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        else:
-            for k in range(1,i[0]+1):
-                try:
-                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        # up-left diagonal
-        if i[0] >= j[0]:
-            for k in range(1,j[0]+1):
-                try:
-                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        else:
-            for k in range(1,i[0]+1):
-                try:
-                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-        # down-left
-        if 7-j[0] >= i[0] + 1:
-            for k in range(1,j[0]+1):
-                try:
-                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-            pass
-        else:
-            for k in range(1,8-i[0]):
-                try:
-                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
-                    if trial_tile.piece.player == "BLACK":
-                        self.available_moves.append(trial_tile)
-                        break
-                    elif trial_tile.piece.player == "WHITE": 
-                        break
-                    else: 
-                        self.available_moves.append(trial_tile)
-                except: 
-                    continue
-            pass
-
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
@@ -409,11 +277,12 @@ class bishop(pygame.sprite.Sprite):
             self.first_move = False
         pass
 
+
     def highlight(self, key, tile, dc):
         if tile.piece.player == "BLACK":
-            self.black_able(key, dc)
+            self.moveset("BLACK", "WHITE", key, dc)
         else:
-            self.white_able(key, dc)
+            self.moveset("WHITE", "BLACK", key, dc)
         for i in self.available_moves: 
             p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
             p.set_alpha(100)    # transparency 
