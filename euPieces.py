@@ -28,12 +28,12 @@ class pawn(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('pawnB.png').convert()
+            self.image = pygame.image.load('pieces/pawnB.png').convert()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
             
         else:
-            self.image = pygame.image.load('pawnW.png').convert_alpha()
+            self.image = pygame.image.load('pieces/pawnW.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             
            # self.image.set_colorkey([0,0,0])
@@ -83,6 +83,7 @@ class pawn(pygame.sprite.Sprite):
         """ moves down """
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+        # kill testing
         for k in range(1,3):
             p = 1
             if player == "WHITE":
@@ -93,10 +94,12 @@ class pawn(pygame.sprite.Sprite):
                     self.available_moves.append(trial_tile)
             except:
                 continue
+        # first move test
         if self.first_move:
             for k in range(1,3):
+                p = k
                 if player == "WHITE":
-                    p = k*(-1)
+                    p = -k
                 trial_tile = dc[COORD_ID[i+p,j].item(0)]    # possible tile for it to move
                 if trial_tile.full != True:         # only works for pawn since checks if space above full
                     self.available_moves.append(trial_tile)
@@ -151,11 +154,11 @@ class bishop(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('bishopB.png').convert_alpha()
+            self.image = pygame.image.load('pieces/bishopB.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
          #   self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('bishopW.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/bishopW.jpg').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
           #  self.image.set_colorkey([255,255,255])
         
@@ -339,11 +342,11 @@ class rook(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('rookblack.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/rookblack.jpg').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('rookwhite.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/rookwhite.jpg').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
 
@@ -467,11 +470,11 @@ class queen(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('queenblack.png').convert_alpha()
+            self.image = pygame.image.load('pieces/queenblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('queenwhite.png').convert_alpha()
+            self.image = pygame.image.load('pieces/queenwhite.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         
@@ -704,11 +707,11 @@ class knight(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('knightblack.png').convert_alpha()
+            self.image = pygame.image.load('pieces/knightblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('knightwhite.png').convert_alpha()
+            self.image = pygame.image.load('pieces/knightwhite.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         
@@ -823,11 +826,11 @@ class king(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('kingblack.png').convert_alpha()
+            self.image = pygame.image.load('pieces/kingblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('kingwhite.png').convert_alpha()
+            self.image = pygame.image.load('pieces/kingwhite.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         

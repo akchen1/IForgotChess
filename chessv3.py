@@ -109,7 +109,7 @@ board = board() # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
 
-p1 = EUP.pawn(board.dc["B1"], "BLACK")
+p1 = EUP.pawn(board.dc["C1"], "BLACK")
 p2 = EUP.pawn(board.dc["B2"], "BLACK")
 p3 = EUP.pawn(board.dc["B3"], "BLACK")
 p4 = EUP.pawn(board.dc["B4"], "BLACK")
