@@ -108,27 +108,48 @@ clock = pygame.time.Clock()
 board = board() # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
-b1 = EUP.bishop(board.dc["A6"], "WHITE")
-b2 = EUP.bishop(board.dc["C6"], "BLACK")
-p1 = EUP.pawn(board.dc["A1"], "BLACK")
-p3 = EUP.pawn(board.dc["A3"], "BLACK")
-p2 = EUP.pawn(board.dc["F2"], "WHITE")
-r1 = EUP.rook(board.dc["B1"], "WHITE")
-r2 = EUP.rook(board.dc["F1"], "BLACK")
-q1 = EUP.queen(board.dc["D3"], "BLACK")
-q2 = EUP.queen(board.dc["D5"], "WHITE")
-all_sprites.add(p1, p3, b1, r1, r2, b2, q1, q2)
-all_sprites.add(p2)
+
+p1 = EUP.pawn(board.dc["B1"], "BLACK")
+p2 = EUP.pawn(board.dc["B2"], "BLACK")
+p3 = EUP.pawn(board.dc["B3"], "BLACK")
+p4 = EUP.pawn(board.dc["B4"], "BLACK")
+p5 = EUP.pawn(board.dc["B5"], "BLACK")
+p6 = EUP.pawn(board.dc["B6"], "BLACK")
+p7 = EUP.pawn(board.dc["B7"], "BLACK")
+p8 = EUP.pawn(board.dc["B8"], "BLACK")
+P1 = EUP.pawn(board.dc["G1"], "WHITE")
+P2 = EUP.pawn(board.dc["G2"], "WHITE")
+P3 = EUP.pawn(board.dc["G3"], "WHITE")
+P4 = EUP.pawn(board.dc["G4"], "WHITE")
+P5 = EUP.pawn(board.dc["G5"], "WHITE")
+P6 = EUP.pawn(board.dc["G6"], "WHITE")
+P7 = EUP.pawn(board.dc["G7"], "WHITE")
+P8 = EUP.pawn(board.dc["G8"], "WHITE")
+
+r1 = EUP.rook(board.dc["A1"], "BLACK")
+r2 = EUP.rook(board.dc["A8"], "BLACK")
+R1 = EUP.rook(board.dc["H1"], "WHITE")
+R2 = EUP.rook(board.dc["H8"], "WHITE")
+
+k1 = EUP.king(board.dc["A5"], "BLACK")
+K2 = EUP.king(board.dc["H5"], "WHITE")
+
+b1 = EUP.bishop(board.dc["A3"], "BLACK")
+b2 = EUP.bishop(board.dc["A6"], "BLACK")
+B1 = EUP.bishop(board.dc["H3"], "WHITE")
+B2 = EUP.bishop(board.dc["H6"], "WHITE")
+
+q1 = EUP.queen(board.dc["A4"], "BLACK")
+Q1 = EUP.queen(board.dc["H4"], "WHITE")
+
+kn1 = EUP.knight(board.dc["A2"], "BLACK")
+kn2 = EUP.knight(board.dc["A7"], "BLACK")
+Kn1 = EUP.knight(board.dc["H2"], "WHITE")
+Kn2 = EUP.knight(board.dc["H7"], "WHITE")
+all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
+all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
 running = True
-b1.set_position()
-p1.set_position()
-p2.set_position()
-p3.set_position()
-r1.set_position()
-r2.set_position()
-b2.set_position()
-q1.set_position()
-q2.set_position()
+white_turn = True
 while running:
     clock.tick(fps)
     board.draw_board()
@@ -140,17 +161,28 @@ while running:
         if event.type == pygame.QUIT:
             running = False 
         if event.type == pygame.MOUSEBUTTONDOWN: # click on piece
+
             mouse_pos = pygame.mouse.get_pos() # get piece location
             found, key, tile = find_tile(board, mouse_pos, tile_flag)  # find corresponding tile
-            if found:
+            if found and tile.piece.player == "WHITE" and white_turn:
                 tile.piece.highlight(key, tile, dc)
                 wait_button()   # wait for input for new location
                 new_mouse_pos = pygame.mouse.get_pos()
                 found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
                 if found: 
-                    tile.piece.move(new_tile)
-                #    tile.piece.updatep(board.dc[new_key])
-                     
+                    changed = tile.piece.move(new_tile)
+                    if changed:
+                
+                        white_turn = False
+            elif found and tile.piece.player == "BLACK" and not white_turn:
+                tile.piece.highlight(key, tile, dc)
+                wait_button()   # wait for input for new location
+                new_mouse_pos = pygame.mouse.get_pos()
+                found, new_key, new_tile = find_tile(board, new_mouse_pos, not tile_flag)
+                if found: 
+                    changed = tile.piece.move(new_tile)
+                    if changed:
+                        white_turn = True         
                              
 pygame.quit()
 
