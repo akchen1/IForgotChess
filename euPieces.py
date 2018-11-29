@@ -750,52 +750,56 @@ class knight(pygame.sprite.Sprite):
         self.available_moves = []
         i, j = np.where(COORD_ID == key) 
         for k in range(0,2):
-            try:
-                trial_tile = dc[COORD_ID[i-2,j+1-2*k].item(0)]
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile) 
-                elif trial_tile.piece.player == player: 
-                    pass
-                else: 
-                    self.available_moves.append(trial_tile)
-            except: 
-                continue
+            if (i-2 > -1 and j+1-2*k > -1):
+                try:
+                    trial_tile = dc[COORD_ID[i-2,j+1-2*k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile) 
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
 
         for k in range(0,2):
-            try:
-                trial_tile = dc[COORD_ID[i+2,j+1-2*k].item(0)]
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile)
-                elif trial_tile.piece.player == player: 
-                    pass
-                else: 
-                    self.available_moves.append(trial_tile)
-            except: 
-                continue
+            if (i+2 > -1 and j+1-2*k > -1):
+                try:
+                    trial_tile = dc[COORD_ID[i+2,j+1-2*k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
 
         for k in range(0,2):
-            try:
-                trial_tile = dc[COORD_ID[i+1-2*k,j-2].item(0)]
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile)
-                elif trial_tile.piece.player == player: 
-                    pass
-                else: 
-                    self.available_moves.append(trial_tile)
-            except: 
-                continue
+            if (i+1-2*k > -1 and j-2 > -1):
+                try:
+                    trial_tile = dc[COORD_ID[i+1-2*k,j-2].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
 
         for k in range(0,2):
-            try:
-                trial_tile = dc[COORD_ID[i+1-2*k,j+2].item(0)]
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile)
-                elif trial_tile.piece.player == player: 
-                    pass
-                else: 
-                    self.available_moves.append(trial_tile)
-            except: 
-                continue
+            if (i+1-2*k > -1 and j+2 > -1):
+                try:
+                    trial_tile = dc[COORD_ID[i+1-2*k,j+2].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
@@ -872,12 +876,13 @@ class king(pygame.sprite.Sprite):
             for w in range(0, 3):
                 try:
                     trial_tile = dc[COORD_ID[i-1+w,j+k].item(0)]
-                    if trial_tile.piece.player == enemy:
-                        self.available_moves.append(trial_tile) 
-                    elif trial_tile.piece.player == player: 
-                        pass
-                    else: 
-                        self.available_moves.append(trial_tile)
+                    if (i-1+w > -1 and j+k > -1):
+                        if trial_tile.piece.player == enemy:
+                            self.available_moves.append(trial_tile) 
+                        elif trial_tile.piece.player == player: 
+                            pass
+                        else: 
+                            self.available_moves.append(trial_tile)
                 except: 
                     continue
 
