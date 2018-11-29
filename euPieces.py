@@ -600,3 +600,401 @@ class rook(pygame.sprite.Sprite):
             #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
+        
+        
+        
+class queen(pygame.sprite.Sprite):
+    def __init__(self, tile, player):
+        pygame.sprite.Sprite.__init__(self)
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('queenblack.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+         #   self.image.set_colorkey([255,255,255])
+        else:
+            self.image = pygame.image.load('queenwhite.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+          #  self.image.set_colorkey([255,255,255])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        self.rect.x = new_tile.x_pos
+        self.rect.y = new_tile.y_pos
+        self.tile.full = False
+        self.tile.piece = empty()
+        self.tile = new_tile
+        self.tile.full = True
+        self.tile.piece = self
+        pass
+
+    def black_able(self, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+
+        if j[0] >= i[0]: # down right
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-right diagonal
+        if 7-j[0] <= i[0]:
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-left diagonal
+        if i[0] >= j[0]:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # down-left
+        if 7-j[0] >= i[0] + 1:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == "WHITE":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "BLACK": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+        # right
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i,j+k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # left
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i,j-k].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # down
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j].item(0)]
+                if trial_tile.piece.player == "WHITE":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "BLACK": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        pass
+            
+    def white_able(self, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+        # down-right diagonal
+        if j[0] >= i[0]:
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-right diagonal
+        if 7-j[0] <= i[0]:
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-left diagonal
+        if i[0] >= j[0]:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # down-left
+        if 7-j[0] >= i[0] + 1:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == "BLACK":
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == "WHITE": 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+        # right
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i,j+k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # left
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i,j-k].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # down
+        for k in range(1,8):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j].item(0)]
+                if trial_tile.piece.player == "BLACK":
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == "WHITE": 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        pass
+
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            self.updatep(new_tile)
+            self.first_move = False
+        pass
+
+    def highlight(self, key, tile, dc):
+        if tile.piece.player == "BLACK":
+            self.black_able(key, dc)
+        else:
+            self.white_able(key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
