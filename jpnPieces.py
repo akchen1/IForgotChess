@@ -24,18 +24,19 @@ class empty:
         pass
         
 class gold(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
+        self.key = key
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('pieces/gold.png').convert_alpha()
+            self.image = pygame.image.load('pieces/gold-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
 
           #  self.image.set_colorkey([255,255,255])
             
         else:
-            self.image = pygame.image.load('pieces/gold.png').convert_alpha()
+            self.image = pygame.image.load('pieces/gold-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
          #   self.image = pygame.transform.flip(self.image, 0, 1)
            # self.image.set_colorkey([0,0,0])
@@ -55,7 +56,6 @@ class gold(pygame.sprite.Sprite):
         pass
         
     def updatep(self, new_tile):
-        
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -67,18 +67,8 @@ class gold(pygame.sprite.Sprite):
             self.tile.piece = empty()
             self.tile = new_tile
             self.tile.full = True
-            promoted, new_piece = self.promotion()
-            if promoted:
-                self.kill()
-                command = '{}(self.tile, self.player)'
-                command = command.format(new_piece)
-                self.tile.piece = eval(command)
-                #self.tile.piece = queen(self.tile, "WHITE")
-                return(True, True, self.tile.piece)
-            else:
-                self.tile.piece = self
+            self.tile.piece = self
             return(True, False, False)
-        pass
 
     def moveset(self, player, enemy, key, dc):
         """ reciprocal of white movement """
@@ -86,47 +76,48 @@ class gold(pygame.sprite.Sprite):
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
         # kill testing
-        for k in range(1,3):
-            p = 1
+        for k in range(-1,2):
             if player == "WHITE":
-                p = p * (-1)
+                r = range(0,2)
+                b = 1
+            else:
+                r = range(1,3)
+                b = -1
+            for w in r:
+                try:
+                    trial_tile = dc[COORD_ID[i-1+w,j+k].item(0)]
+                    if (i-1+w > -1 and j+k > -1):
+                        if trial_tile.piece.player == enemy:
+                            self.available_moves.append(trial_tile) 
+                        elif trial_tile.piece.player == player: 
+                            pass
+                        else: 
+                            self.available_moves.append(trial_tile)
+                except: 
+                    continue
             try:
-                trial_tile = dc[COORD_ID[i+p,j+(-1)**k].item(0)]  
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile)
-            except:
+                trial_tile = dc[COORD_ID[i+b,j].item(0)]
+                if (i-1+w > -1 and j+k > -1):
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile) 
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+            except: 
                 continue
-        # first move test
-        if self.first_move:
-            for k in range(1,3):
-                p = k
-                if player == "WHITE":
-                    p = -k
-                trial_tile = dc[COORD_ID[i+p,j].item(0)]    # possible tile for it to move
-                if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
-                else:
-                    break
-        else:
-            p = 1
-            if player == "WHITE":
-                p = p*(-1)
-            trial_tile = dc[COORD_ID[i+p,j].item(0)]   
-            if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
-        pass
-
+                
     def move(self, new_tile):
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             self.first_move = False 
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
         pass
 
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -139,13 +130,798 @@ class gold(pygame.sprite.Sprite):
             #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
-    def promotion(self):
-        if self.player == "WHITE" and self.rect.y == 0:
-            new_class = input("select class: ")
-            return(True, new_class)
-        elif self.player == "BLACK" and self.rect.y == 563:
-            new_class = input("select class: ")
-            return(True, new_class)
+    
+class silver(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/silver-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+
+          #  self.image.set_colorkey([255,255,255])
+            
         else:
-            return(False,False)
-    pass
+            self.image = pygame.image.load('pieces/silver-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+         #   self.image = pygame.transform.flip(self.image, 0, 1)
+           # self.image.set_colorkey([0,0,0])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return(True, False, False)
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+        # kill testing
+        for k in range(-1,2):
+            if player == "BLACK":
+                b = 1
+            else:
+                b = -1
+            try:
+                trial_tile = dc[COORD_ID[i+b,j+k].item(0)]
+                if i+b > -1 and j+k > -1:
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile) 
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+            except: 
+                continue
+            try:
+                b = b*(-1)
+                for x in [-1, 1]:
+                    trial_tile = dc[COORD_ID[i+b,j+x].item(0)]
+                    if i+b > -1 and j+x > -1:
+                        if trial_tile.piece.player == enemy:
+                            self.available_moves.append(trial_tile) 
+                        elif trial_tile.piece.player == player: 
+                            pass
+                        else: 
+                            self.available_moves.append(trial_tile)
+            except: 
+                continue
+                
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+class knight(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/knight-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+
+          #  self.image.set_colorkey([255,255,255])
+            
+        else:
+            self.image = pygame.image.load('pieces/knight-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+         #   self.image = pygame.transform.flip(self.image, 0, 1)
+           # self.image.set_colorkey([0,0,0])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return(True, False, False)
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)
+        if player == "WHITE":
+            x = 1
+        else:
+            x = -1 
+        for k in range(0,2):
+            if (i-2 > -1 and j+1-2*k > -1):
+                try:
+                    trial_tile = dc[COORD_ID[i-2*x,j+1-2*k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile) 
+                    elif trial_tile.piece.player == player: 
+                        pass
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+class lance(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/lance-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+
+          #  self.image.set_colorkey([255,255,255])
+            
+        else:
+            self.image = pygame.image.load('pieces/lance-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+         #   self.image = pygame.transform.flip(self.image, 0, 1)
+           # self.image.set_colorkey([0,0,0])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return(True, False, False)
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)
+        if player == "WHITE":
+            x = 1
+        else:
+            x = -1 
+        for k in range(1,i[0]+1):
+            try:
+                trial_tile = dc[COORD_ID[i-k*x,j].item(0)]
+                if trial_tile.piece.player == enemy:
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == player: 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+class bishop(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/bishop-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+         #   self.image.set_colorkey([255,255,255])
+        else:
+            self.image = pygame.image.load('pieces/bishop-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+          #  self.image.set_colorkey([255,255,255])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+          
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return (True, False,False)
+        
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
+
+        if j[0] >= i[0]: # down right
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j+k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-right diagonal
+        if 7-j[0] <= i[0]:
+            for k in range(1,8-j[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j+k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # up-left diagonal
+        if i[0] >= j[0]:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        else:
+            for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j-k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+        # down-left
+        if 7-j[0] >= i[0] + 1:
+            for k in range(1,j[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+        else:
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j-k].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
+            pass
+            
+
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False
+            
+            
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+class rook(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/rook-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+            self.image.set_colorkey([255,255,255])
+        else:
+            self.image = pygame.image.load('pieces/rook-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image.set_colorkey([255,255,255])
+
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        self.set_position()
+        pass
+    
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+    
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+          
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return (True, False,False)
+       
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)
+
+        # right
+        for k in range(1,8-j[0]):
+            try:
+                trial_tile = dc[COORD_ID[i,j+k].item(0)]
+                if trial_tile.piece.player == enemy:
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == player: 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # left
+        for k in range(1,j[0]+1):
+            try:
+                trial_tile = dc[COORD_ID[i,j-k].item(0)]
+                if trial_tile.piece.player == enemy:
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == player: 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # up
+        for k in range(1,i[0]+1):
+            try:
+                trial_tile = dc[COORD_ID[i-k,j].item(0)]
+                if trial_tile.piece.player == enemy:
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == player: 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        # down
+        for k in range(1,8-i[0]):
+            try:
+                trial_tile = dc[COORD_ID[i+k,j].item(0)]
+                if trial_tile.piece.player == enemy:
+                    self.available_moves.append(trial_tile)
+                    break
+                elif trial_tile.piece.player == player: 
+                    break
+                else: 
+                    self.available_moves.append(trial_tile)
+            except: 
+                continue
+        pass
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False
+            
+            
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass 
+
+class pawn(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.key = key
+        self.player = player
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/pawn-jpn.png').convert_alpha()
+            #self.image.set_colorkey((0,255,0))
+            
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+            
+        else:
+            self.image = pygame.image.load('pieces/pawn-jpn.png').convert_alpha()
+            #self.image.set_colorkey((0,255,0))
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            
+
+        self.rect = self.image.get_rect()
+        
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        self.set_position()
+        pass
+    
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+    
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+          
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return (True, False,False)
+       
+
+    def moveset(self, player, enemy, key, dc):
+        """ reciprocal of white movement """
+        """ moves down """
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key)
+        if player == "WHITE":
+            x = 1
+        else:
+            x = -1 
+        
+        try:
+            trial_tile = dc[COORD_ID[i-1*x,j].item(0)]
+            if trial_tile.piece.player == enemy:
+                self.available_moves.append(trial_tile)
+            elif trial_tile.piece.player == player: 
+                pass
+            else: 
+                self.available_moves.append(trial_tile)
+        except: 
+            pass
+        
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False
+            
+            
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass 
+
+class king(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.player = player
+        self.key = key
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image = pygame.transform.flip(self.image, 0, 1)
+            self.image.set_colorkey([255,255,255])
+        else:
+            self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image.set_colorkey([255,255,255])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.first_move = True
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile.full:
+            new_tile.piece.kill()
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+          
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return (True, False,False)
+        
+
+    def moveset(self, player, enemy, key, dc):
+        self.available_moves = []
+        i, j = np.where(COORD_ID == key) 
+        for k in range(-1,2):
+            for w in range(0, 3):
+                try:
+                    trial_tile = dc[COORD_ID[i-1+w,j+k].item(0)]
+                    if (i-1+w > -1 and j+k > -1):
+                        if trial_tile.piece.player == enemy:
+                            self.available_moves.append(trial_tile) 
+                        elif trial_tile.piece.player == player: 
+                            pass
+                        else: 
+                            self.available_moves.append(trial_tile)
+                except: 
+                    continue
+
+
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False
+            
+            
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass

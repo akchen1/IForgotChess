@@ -123,52 +123,58 @@ clock = pygame.time.Clock()
 board = board() # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
+p = [None]*8
+P = [None]*8
 
-p1 = EUP.pawn(board.dc["C1"], "BLACK", "B1")
-p2 = EUP.pawn(board.dc["B2"], "BLACK", "B2")
-p3 = EUP.pawn(board.dc["B3"], "BLACK", "B3")
-p4 = EUP.pawn(board.dc["B4"], "BLACK", "B4")
-p5 = EUP.pawn(board.dc["B5"], "BLACK", "B5")
-p6 = EUP.pawn(board.dc["B6"], "BLACK", "B6")
-p7 = EUP.pawn(board.dc["B7"], "BLACK", "B7")
-p8 = EUP.pawn(board.dc["B8"], "BLACK", "B8")
-P1 = EUP.pawn(board.dc["G1"], "WHITE", "G1")
-P2 = EUP.pawn(board.dc["G2"], "WHITE", "G2")
-P3 = EUP.pawn(board.dc["G3"], "WHITE", "G3")
-P4 = EUP.pawn(board.dc["G4"], "WHITE", "G4")
-P5 = EUP.pawn(board.dc["G5"], "WHITE", "G5")
-P6 = EUP.pawn(board.dc["G6"], "WHITE", "G6")
-P7 = EUP.pawn(board.dc["G7"], "WHITE", "G7")
-P8 = EUP.pawn(board.dc["G8"], "WHITE", "G8")
-
-r1 = EUP.rook(board.dc["A1"], "BLACK", "A1")
-r2 = EUP.rook(board.dc["A8"], "BLACK", "A8")
-R1 = EUP.rook(board.dc["H1"], "WHITE", "H1")
-R2 = EUP.rook(board.dc["H8"], "WHITE", "H8")
-
-k1 = EUP.king(board.dc["A5"], "BLACK", "A5")
-K2 = EUP.king(board.dc["H5"], "WHITE", "H5")
-
-b1 = EUP.bishop(board.dc["A3"], "BLACK", "A3")
-b2 = EUP.bishop(board.dc["A6"], "BLACK", "A6")
-B1 = EUP.bishop(board.dc["H3"], "WHITE", "H3")
-B2 = EUP.bishop(board.dc["H6"], "WHITE", "H6")
-
-q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
-Q1 = EUP.queen(board.dc["H4"], "WHITE", "H4")
-
-kn1 = EUP.knight(board.dc["A2"], "BLACK", "A2")
-kn2 = EUP.knight(board.dc["A7"], "BLACK", "A7")
-Kn1 = EUP.knight(board.dc["H2"], "WHITE", "H2")
-Kn2 = EUP.knight(board.dc["H7"], "WHITE", "H7")
+i = 1
+for x in p: # White pawns
+    key = "B{}"
+    key = key.format(i)
+    i+=1
+    x = JPN.pawn(board.dc[key], "BLACK", key)
+    all_sprites.add(x)
+i = 1
+for x in P: # Black pawns
+    key = "G{}"
+    key = key.format(i)
+    i += 1
+    x = JPN.pawn(board.dc[key], "WHITE", key)
+    all_sprites.add(x)
 
 
-#g1 = JPN.gold(board.dc["D3"], "BLACK")
-#g2 = JPN.gold(board.dc["E4"], "WHITE")
+# r1 = JPN.rook(board.dc["A1"], "BLACK", "A1")
+r2 = JPN.rook(board.dc["A8"], "BLACK", "A8")
+# R1 = JPN.rook(board.dc["H1"], "WHITE", "H1")
+R2 = JPN.rook(board.dc["H8"], "WHITE", "H8")
+
+k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
+K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
+
+b1 = JPN.bishop(board.dc["A3"], "BLACK", "A3")
+# b2 = JPN.bishop(board.dc["A6"], "BLACK", "A6")
+B1 = JPN.bishop(board.dc["H3"], "WHITE", "H3")
+# B2 = JPN.bishop(board.dc["H6"], "WHITE", "H6")
+
+# q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
+# Q1 = EUP.queen(board.dc["H4"], "WHITE", "H4")
+
+kn1 = JPN.knight(board.dc["A2"], "BLACK", "A2")
+# kn2 = JPN.knight(board.dc["A7"], "BLACK", "A7")
+Kn1 = JPN.knight(board.dc["H2"], "WHITE", "H2")
+# Kn2 = JPN.knight(board.dc["H7"], "WHITE", "H7")
+
+s1 = JPN.silver(board.dc["F1"], "BLACK", "F1")
+s2 = JPN.silver(board.dc["F2"], "WHITE", "F2")
+g1 = JPN.pawn(board.dc["E4"], "BLACK", "E3")
+g2 = JPN.pawn(board.dc["E5"], "WHITE", "E5")
+
+l1 = JPN.lance(board.dc["F3"], "BLACK", "F3")
+l2 = JPN.lance(board.dc["F4"], "WHITE", "F4")
 
 
-all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
-all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
+# all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
+#all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
+all_sprites.add(g1,g2,s1,s2,l1,l2,kn1,Kn1, B1, b1, k1,K2,r2,R2)
 
 running = True
 white_turn = True
@@ -194,7 +200,10 @@ while running:
                 if found: 
                     changed, promotion, new_promo = tile.piece.move(new_tile)
                     if changed:
-                        running = checkmate("WHITE", "BLACK",k1)
+                        try:
+                            running = checkmate("WHITE", "BLACK",k1)
+                        except:
+                            pass
                         white_turn = False
                         if promotion:
                             all_sprites.add(new_promo)
@@ -208,7 +217,10 @@ while running:
                     changed, promotion, new_promo = tile.piece.move(new_tile)
                     
                     if changed:
-                        running = checkmate("BLACK", "WHITE",K2)               
+                        try:
+                            running = checkmate("BLACK", "WHITE",K2)
+                        except:
+                            pass              
                         white_turn = True
                         if promotion:
                             all_sprites.add(new_promo)

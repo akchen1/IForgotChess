@@ -69,7 +69,7 @@ class pawn(pygame.sprite.Sprite):
             promoted, new_piece = self.promotion()
             if promoted:
                 self.kill()
-                command = '{}(self.tile, self.player)'
+                command = '{}(self.tile, self.player, self.key)'
                 command = command.format(new_piece)
                 self.tile.piece = eval(command)
                 #self.tile.piece = queen(self.tile, "WHITE")
