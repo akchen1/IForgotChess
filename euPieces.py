@@ -24,9 +24,10 @@ class empty:
         pass
         
 class pawn(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
+        self.key = key
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/pawnB.png').convert()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
@@ -100,19 +101,26 @@ class pawn(pygame.sprite.Sprite):
                 p = k
                 if player == "WHITE":
                     p = -k
-                trial_tile = dc[COORD_ID[i+p,j].item(0)]    # possible tile for it to move
-                if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
-                else:
-                    break
+                try:
+                    trial_tile = dc[COORD_ID[i+p,j].item(0)]    # possible tile for it to move
+                    if trial_tile.full != True:         # only works for pawn since checks if space above full
+                        self.available_moves.append(trial_tile)
+                    else:
+                        break
+                except:
+                    continue
         else:
             p = 1
             if player == "WHITE":
                 p = p*(-1)
-            trial_tile = dc[COORD_ID[i+p,j].item(0)]   
-            if trial_tile.full != True:         # only works for pawn since checks if space above full
-                    self.available_moves.append(trial_tile)
+            try:
+                trial_tile = dc[COORD_ID[i+p,j].item(0)]   
+                if trial_tile.full != True:         # only works for pawn since checks if space above full
+                        self.available_moves.append(trial_tile)
+            except:
+                pass
         pass
+        
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
@@ -125,6 +133,7 @@ class pawn(pygame.sprite.Sprite):
         pass
 
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -150,8 +159,9 @@ class pawn(pygame.sprite.Sprite):
 
 
 class bishop(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
+        self.key = key
         self.player = player
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/bishopB.png').convert_alpha()
@@ -324,6 +334,7 @@ class bishop(pygame.sprite.Sprite):
 
 
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -338,8 +349,9 @@ class bishop(pygame.sprite.Sprite):
         pass
 
 class rook(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
+        self.key = key
         self.player = player
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/rookblack.jpg').convert_alpha()
@@ -452,6 +464,7 @@ class rook(pygame.sprite.Sprite):
         pass
 
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -466,8 +479,9 @@ class rook(pygame.sprite.Sprite):
         pass    
                 
 class queen(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
+        self.key = key
         self.player = player
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/queenblack.png').convert_alpha()
@@ -689,6 +703,7 @@ class queen(pygame.sprite.Sprite):
         pass
 
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -703,8 +718,9 @@ class queen(pygame.sprite.Sprite):
         pass    
 
 class knight(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
+        self.key = key
         self.player = player
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/knightblack.png').convert_alpha()
@@ -812,6 +828,7 @@ class knight(pygame.sprite.Sprite):
             return (False, False, False)
         pass
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -826,9 +843,10 @@ class knight(pygame.sprite.Sprite):
         pass 
 
 class king(pygame.sprite.Sprite):
-    def __init__(self, tile, player):
+    def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
+        self.key = key
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/kingblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
@@ -898,6 +916,7 @@ class king(pygame.sprite.Sprite):
             return (False, False, False)
         pass
     def highlight(self, key, tile, dc):
+        self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
         else:
@@ -910,3 +929,5 @@ class king(pygame.sprite.Sprite):
             #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass   
+    
+   
