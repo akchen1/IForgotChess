@@ -32,7 +32,6 @@ class gold(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/gold-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
           #  self.image.set_colorkey([255,255,255])
             
         else:
@@ -846,11 +845,11 @@ class king(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-            self.image.set_colorkey([255,255,255])
+        #   self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
+        #   self.image.set_colorkey([255,255,255])
         
         self.rect = self.image.get_rect()
         self.tile = tile
