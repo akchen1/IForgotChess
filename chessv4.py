@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 import numpy as np
 
 pygame.init()
@@ -17,6 +18,7 @@ import euPieces as EUP
 # These import modules are not in the header since they require a display to be 
 # made in pygame so that they can get the display size
 
+
 COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
                      ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'],
@@ -26,6 +28,11 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8'],
                      ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']])
 # 2D Coordinate array that shows the position of each tile of the chess board
+
+random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold]
+random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.silver, JPN.silver,
+                    JPN.lance, EUP.queen]
+random_king = [EUP.king, JPN.king]
 
 
 class tile:
@@ -130,6 +137,45 @@ def checkmate(player, enemy, king):
         return(False)
     return(True)
 
+def make_pieces():
+
+    p = [None]*8
+    i = 1
+    for x in p:  # black pawns
+        key = "B{}"
+        key = key.format(i)
+        x = random.choice(random_pawn)(board.dc[key], "BLACK", key)
+        all_sprites.add(x)
+        key = "A{}"
+        key = key.format(i)
+        if key == "A5":
+            k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
+            all_sprites.add(k1)
+            i += 1
+            continue
+        x = random.choice(random_exclusive)(board.dc[key], "BLACK", key)
+        all_sprites.add(x)
+        i += 1
+
+    i = 1
+    p = [None]*8
+    for x in p:  # white pawns
+        key = "G{}"
+        key = key.format(i)
+        x = random.choice(random_pawn)(board.dc[key], "WHITE", key)
+        all_sprites.add(x)
+        key = "H{}"
+        key = key.format(i)
+        if key == "H5":
+            K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
+            all_sprites.add(K2)
+            i += 1
+            continue
+        x = random.choice(random_exclusive)(board.dc[key], "WHITE", key)
+        all_sprites.add(x)
+        i += 1
+    pass
+
 
 tile_flag = 1
 fps = 30
@@ -137,58 +183,42 @@ clock = pygame.time.Clock()
 board = board()  # initialize board
 dc = board.gimme_dictionary_lmao()
 all_sprites = pygame.sprite.Group()
-p = [None]*8
-P = [None]*8
 
-i = 1
-for x in p:  # White pawns
-    key = "B{}"
-    key = key.format(i)
-    i += 1
-    x = JPN.pawn(board.dc[key], "BLACK", key)
-    all_sprites.add(x)
-i = 1
-for x in P:  # Black pawns
-    key = "G{}"
-    key = key.format(i)
-    i += 1
-    x = JPN.pawn(board.dc[key], "WHITE", key)
-    all_sprites.add(x)
+make_pieces()
 
+# # r1 = JPN.rook(board.dc["A1"], "BLACK", "A1")
+# r2 = JPN.rook(board.dc["A8"], "BLACK", "A8")
+# # R1 = JPN.rook(board.dc["H1"], "WHITE", "H1")
+# R2 = JPN.rook(board.dc["H8"], "WHITE", "H8")
 
-# r1 = JPN.rook(board.dc["A1"], "BLACK", "A1")
-r2 = JPN.rook(board.dc["A8"], "BLACK", "A8")
-# R1 = JPN.rook(board.dc["H1"], "WHITE", "H1")
-R2 = JPN.rook(board.dc["H8"], "WHITE", "H8")
+# k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
+# K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
 
-k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
-K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
+# b1 = JPN.bishop(board.dc["A3"], "BLACK", "A3")
+# # b2 = JPN.bishop(board.dc["A6"], "BLACK", "A6")
+# B1 = JPN.bishop(board.dc["H3"], "WHITE", "H3")
+# # B2 = JPN.bishop(board.dc["H6"], "WHITE", "H6")
 
-b1 = JPN.bishop(board.dc["A3"], "BLACK", "A3")
-# b2 = JPN.bishop(board.dc["A6"], "BLACK", "A6")
-B1 = JPN.bishop(board.dc["H3"], "WHITE", "H3")
-# B2 = JPN.bishop(board.dc["H6"], "WHITE", "H6")
+# # q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
+# # Q1 = EUP.queen(board.dc["H4"], "WHITE", "H4")
 
-# q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
-# Q1 = EUP.queen(board.dc["H4"], "WHITE", "H4")
+# kn1 = JPN.knight(board.dc["A2"], "BLACK", "A2")
+# # kn2 = JPN.knight(board.dc["A7"], "BLACK", "A7")
+# Kn1 = JPN.knight(board.dc["H2"], "WHITE", "H2")
+# # Kn2 = JPN.knight(board.dc["H7"], "WHITE", "H7")
 
-kn1 = JPN.knight(board.dc["A2"], "BLACK", "A2")
-# kn2 = JPN.knight(board.dc["A7"], "BLACK", "A7")
-Kn1 = JPN.knight(board.dc["H2"], "WHITE", "H2")
-# Kn2 = JPN.knight(board.dc["H7"], "WHITE", "H7")
+# s1 = JPN.silver(board.dc["F1"], "BLACK", "F1")
+# s2 = JPN.silver(board.dc["F2"], "WHITE", "F2")
+# g1 = JPN.pawn(board.dc["E4"], "BLACK", "E3")
+# g2 = JPN.pawn(board.dc["E5"], "WHITE", "E5")
 
-s1 = JPN.silver(board.dc["F1"], "BLACK", "F1")
-s2 = JPN.silver(board.dc["F2"], "WHITE", "F2")
-g1 = JPN.pawn(board.dc["E4"], "BLACK", "E3")
-g2 = JPN.pawn(board.dc["E5"], "WHITE", "E5")
-
-l1 = JPN.lance(board.dc["F3"], "BLACK", "F3")
-l2 = JPN.lance(board.dc["F4"], "WHITE", "F4")
+# l1 = JPN.lance(board.dc["F3"], "BLACK", "F3")
+# l2 = JPN.lance(board.dc["F4"], "WHITE", "F4")
 
 
 # all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
 #all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
-all_sprites.add(g1, g2, s1, s2, l1, l2, kn1, Kn1, B1, b1, k1, K2, r2, R2)
+#all_sprites.add(g1, g2, s1, s2, l1, l2, kn1, Kn1, B1, b1, k1, K2, r2, R2)
 
 running = True
 white_turn = True

@@ -146,6 +146,7 @@ class pawn(pygame.sprite.Sprite):
             #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
         pass
+        
     def promotion(self):
         if self.player == "WHITE" and self.rect.y == 0:
             new_class = input("select class: ")
