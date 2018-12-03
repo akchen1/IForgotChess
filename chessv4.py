@@ -189,14 +189,15 @@ make_pieces()
 # # r1 = JPN.rook(board.dc["A1"], "BLACK", "A1")
 # r2 = JPN.rook(board.dc["A8"], "BLACK", "A8")
 # # R1 = JPN.rook(board.dc["H1"], "WHITE", "H1")
-# R2 = JPN.rook(board.dc["H8"], "WHITE", "H8")
+R2 = JPN.rook(board.dc["D4"], "BLACK", "D4")
 
 # k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
 # K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
 
 # b1 = JPN.bishop(board.dc["A3"], "BLACK", "A3")
 # # b2 = JPN.bishop(board.dc["A6"], "BLACK", "A6")
-# B1 = JPN.bishop(board.dc["H3"], "WHITE", "H3")
+B1 = JPN.bishop(board.dc["D3"], "BLACK", "D3")
+all_sprites.add(B1,R2)
 # # B2 = JPN.bishop(board.dc["H6"], "WHITE", "H6")
 
 # # q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
