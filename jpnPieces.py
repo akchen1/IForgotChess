@@ -243,13 +243,13 @@ class silver(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
@@ -371,7 +371,6 @@ class knight(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/knight-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
           #  self.image.set_colorkey([255,255,255])
             
         else:
@@ -461,13 +460,13 @@ class knight(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
@@ -678,13 +677,13 @@ class lance(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
@@ -991,13 +990,13 @@ class bishop(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
@@ -1351,13 +1350,13 @@ class rook(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
@@ -1609,13 +1608,13 @@ class pawn(pygame.sprite.Sprite):
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
         elif self.player == "BLACK" and self.rect.y >= 483:
             promote = input("promote?(y/n) ")
-            if promote == "y":
+            if promote == "y" or promote == "yes" or promote == "Y":
                 return(True)
             else:
                 return(False)
