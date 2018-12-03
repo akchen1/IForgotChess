@@ -29,9 +29,9 @@ class pawn(pygame.sprite.Sprite):
         self.player = player
         self.key = key
         if self.player == "BLACK":
-            self.image = pygame.image.load('pieces/pawnB.png').convert()
+            self.image = pygame.image.load('pieces/pawnB.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
+            #self.image.set_colorkey([255,255,255])
             
         else:
             self.image = pygame.image.load('pieces/pawnW.png').convert_alpha()
@@ -158,18 +158,17 @@ class pawn(pygame.sprite.Sprite):
             return(False,False)
     pass
 
-
 class bishop(pygame.sprite.Sprite):
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('pieces/bishopB.png').convert_alpha()
+            self.image = pygame.image.load('pieces/bishopblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
          #   self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('pieces/bishopW.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/bishopwhite.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
           #  self.image.set_colorkey([255,255,255])
         
@@ -355,11 +354,11 @@ class rook(pygame.sprite.Sprite):
         self.key = key
         self.player = player
         if self.player == "BLACK":
-            self.image = pygame.image.load('pieces/rookblack.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/rookblack.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
         else:
-            self.image = pygame.image.load('pieces/rookwhite.jpg').convert_alpha()
+            self.image = pygame.image.load('pieces/rookwhite.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image.set_colorkey([255,255,255])
 
