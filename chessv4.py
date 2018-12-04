@@ -141,7 +141,7 @@ def checkmate(player, enemy, king):
     be outputed. Additinally, checkmate() checks if the the enemy king is alive.
     if dead, game loop will end. '''
     for x in all_sprites:   # loop through all sprites (pieces)
-        if x.player == player:  # if piece found is same as player piece
+        if x.player == player and type(x) != type(king):  # if piece found is same as player piece
             if x != new_tile.piece: # if piece hasn't moved
                 x.moveset(player, enemy, x.key, dc) # find moveset using old coordinates
             else:   # if piece moved
