@@ -971,6 +971,17 @@ class checker(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
+            promoted, new_piece = self.promotion()
+            if promoted:
+                self.kill()
+                command = '{}(self.tile, self.player, self.key)'
+                command = command.format(new_piece)
+                self.tile.piece = eval(command)
+                #self.tile.piece = queen(self.tile, "WHITE")
+                return(True, True, self.tile.piece)
+            else:
+                self.tile.piece = self
+            return(True, False, False)
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
             return(False, False, False)
 
@@ -982,7 +993,17 @@ class checker(pygame.sprite.Sprite):
             self.tile = new_tile
             self.tile.full = True
             self.tile.piece = self
-            return (True, False,False)
+            promoted, new_piece = self.promotion()
+            if promoted:
+                self.kill()
+                command = '{}(self.tile, self.player, self.key)'
+                command = command.format(new_piece)
+                self.tile.piece = eval(command)
+                #self.tile.piece = queen(self.tile, "WHITE")
+                return(True, True, self.tile.piece)
+            else:
+                self.tile.piece = self
+            return(True, False, False)
         
 
     def moveset(self, player, enemy, key, dc):
@@ -1015,6 +1036,125 @@ class checker(pygame.sprite.Sprite):
                 self.kill_set[dc[COORD_ID[i+p*2, j-2].item(0)]] = trial_tile
         except:
             None
+
+    def move(self, new_tile):
+        if new_tile in self.available_moves:
+            changed, promoted, new_piece = self.updatep(new_tile)
+            self.first_move = False 
+            
+            return (changed, promoted, new_piece)
+        else:
+            return (False, False, False)
+        pass
+        
+    def highlight(self, key, tile, dc):
+        self.key = key
+        if tile.piece.player == "BLACK":
+            self.moveset("BLACK", "WHITE", key, dc)
+        else:
+            self.moveset("WHITE", "BLACK", key, dc)
+        for i in self.available_moves: 
+            p = pygame.Surface((WIDTH/8,HEIGHT/8))  # size
+            p.set_alpha(100)    # transparency 
+            p.fill((153, 204, 255)) # colour
+            display.blit(p,i.rect)
+            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
+            pygame.display.update()
+        pass
+
+    def promotion(self):
+        if self.player == "WHITE" and self.rect.y == 0:
+            return(True, "kingchecker")
+        elif self.player == "BLACK" and self.rect.y == 563:
+            return(True, "kingchecker")
+        else:
+            return(False,False)
+    pass
+
+class kingchecker(pygame.sprite.Sprite):
+    def __init__(self, tile, player, key):
+        pygame.sprite.Sprite.__init__(self)
+        self.player = player
+        self.key = key
+        if self.player == "BLACK":
+            self.image = pygame.image.load('pieces/blackcheckerking.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image.set_colorkey([0,0,0])
+        else:
+            self.image = pygame.image.load('pieces/whitecheckerking.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
+            self.image.set_colorkey([255,255,255])
+        
+        self.rect = self.image.get_rect()
+        self.tile = tile
+        self.available_moves = []
+        self.kill_set = {}
+        self.first_move = True
+        self.player = player
+        self.set_position()
+        pass
+        
+    def set_position(self):
+        (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
+        self.tile.full = True
+        self.tile.piece = self 
+        pass
+        
+    def updatep(self, new_tile):
+        if new_tile in self.kill_set:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.kill_set[new_tile].piece.kill()
+            self.kill_set[new_tile].full = False
+            self.kill_set[new_tile].piece = empty()
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+        if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
+            return(False, False, False)
+
+        else:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
+            return (True, False,False)
+        
+
+    def moveset(self, player, enemy, key, dc):
+        self.available_moves = []
+        p = 1
+        i, j = np.where(COORD_ID == key) 
+        for k in range(1,3):
+            p = (-1)**k
+            try: 
+                if (i+p) >= 0 and (j+1) >= 0:
+                    trial_tile = dc[COORD_ID[i+p,j+1].item(0)]  
+                    if trial_tile.full != True:
+                        self.available_moves.append(trial_tile)
+                    elif (i+p*2) >= 0 and (j+2) >= 0 and trial_tile.piece.player == enemy and (
+                        dc[COORD_ID[i+p*2, j+2].item(0)].full != True): # jump
+                        self.available_moves.append(dc[COORD_ID[i+p*2, j+2].item(0)])
+                        self.kill_set[dc[COORD_ID[i+p*2, j+2].item(0)]] = trial_tile
+            except:
+                None
+ 
+            try:
+                if (i+p) >= 0 and (j-1) >= 0:
+                    trial_tile = dc[COORD_ID[i+p,j-1].item(0)]
+                    if trial_tile.full != True:
+                        self.available_moves.append(trial_tile)
+                elif (i+p*2) >= 0 and (j-2) >= 0 and trial_tile.piece.player == enemy and (
+                    dc[COORD_ID[i+p*2, j-2].item(0)].full != True): # jump
+                    self.available_moves.append(dc[COORD_ID[i+p*2, j-2].item(0)])
+                    self.kill_set[dc[COORD_ID[i+p*2, j-2].item(0)]] = trial_tile
+            except:
+                None
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
