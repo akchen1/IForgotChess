@@ -29,9 +29,9 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']])
 # 2D Coordinate array that shows the position of each tile of the chess board
 
-random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold]
-random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.silver,
-                    JPN.lance, EUP.queen, JPN.bishop, JPN.rook, JPN.knight]
+random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold, EUP.checker]
+random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.knight, JPN.bishop,
+                    JPN.lance, EUP.queen, JPN.gold]
 random_king = [EUP.king, JPN.king]
 
 
@@ -228,60 +228,54 @@ k1,K2 = make_pieces()
 running = True  # run game
 white_turn = True   # white goes first
 
-while running:
-    clock.tick(fps) # set constant fps
-    board.draw_board()  # draw the board
-    all_sprites.update()    # update sprite locations
-    all_sprites.draw(display)   # draw sprites onto board
-    pygame.display.update() # update
-    pygame.display.flip()   # update
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:   # To close pygame window
-            running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:  # check if player clicked on something
-            mouse_pos = pygame.mouse.get_pos()  # get location of mouse cursor
-            found, key, tile = find_tile(
-                board, mouse_pos, tile_flag)  # find corresponding tile at mouse position
-            if found and tile.piece.player == "WHITE" and white_turn:   # if valid tile is found and player is white
-                tile.piece.highlight(key, tile, dc) # highlight the possible moves 
-                wait_button()   # wait for input for new location
-                new_mouse_pos = pygame.mouse.get_pos()  # find the new mouse position
-                found, new_key, new_tile = find_tile(
-                    board, new_mouse_pos, not tile_flag)    # check if new tile is a valid move point
-                if found:   # if valid
-                    # move piece to new tile and check if promotion is avaliable
-                    changed, promotion, new_promo = tile.piece.move(new_tile)   
-                    if changed: # if new piece is moved sucessfully
-                        try:
-                            # run checkmate function (checks if any possible enemy moves can kill king and if king is alive)
-                            # if king is alive, running will be True, if king is dead, running will be False
-                            # Game loop will end
-                            running = checkmate("WHITE", "BLACK", k1)
-                        except:
-                            pass
-                        white_turn = False # Switch to black turn
-                        if promotion:   # if piece is promoted, add the new piece to sprite group
-                            all_sprites.add(new_promo)
+if __name__ == "__main__":
+    while running:
+        clock.tick(fps)
+        board.draw_board()
+        all_sprites.update()
+        all_sprites.draw(display)
+        pygame.display.update()
+        pygame.display.flip()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:  # click on piece
+                mouse_pos = pygame.mouse.get_pos()  # get piece location
+                found, key, tile = find_tile(
+                    board, mouse_pos, tile_flag)  # find corresponding tile
+                if found and tile.piece.player == "WHITE" and white_turn:
+                    tile.piece.highlight(key, tile, dc)
+                    wait_button()   # wait for input for new location
+                    new_mouse_pos = pygame.mouse.get_pos()
+                    found, new_key, new_tile = find_tile(
+                        board, new_mouse_pos, not tile_flag)
+                    if found:
+                        changed, promotion, new_promo = tile.piece.move(new_tile)
+                        if changed:
+                            try:
+                                running = checkmate("WHITE", "BLACK", k1)
+                            except:
+                                pass
+                            white_turn = False
+                            if promotion:
+                                all_sprites.add(new_promo)
 
-            elif found and tile.piece.player == "BLACK" and not white_turn: # if valid tile is found and black turn
-                tile.piece.highlight(key, tile, dc) # highlight possible moves
-                wait_button()   # wait for input for new location
-                new_mouse_pos = pygame.mouse.get_pos()  # obtain mouse position
-                found, new_key, new_tile = find_tile(
-                    board, new_mouse_pos, not tile_flag) # check mouse position for valid tile/piece
-                if found:   # if valid tile/piece found
-                    # move piece to new tile and check if promotion is availabe
-                    changed, promotion, new_promo = tile.piece.move(new_tile)  
-                    if changed: # if move is sucessful, check for checkmate
-                        try:
-                            # run checkmate function (checks if any possible enemy moves can kill king and if king is alive)
-                            # if king is alive, running will be True, if king is dead, running will be False
-                            # Game loop will end
-                            running = checkmate("BLACK", "WHITE", K2)
-                        except:
-                            pass
-                        white_turn = True   # switch to white turn
-                        if promotion:   # If piece is promoted, add piece to sprite group
-                            all_sprites.add(new_promo)
+                elif found and tile.piece.player == "BLACK" and not white_turn:
+                    tile.piece.highlight(key, tile, dc)
+                    wait_button()   # wait for input for new location
+                    new_mouse_pos = pygame.mouse.get_pos()
+                    found, new_key, new_tile = find_tile(
+                        board, new_mouse_pos, not tile_flag)
+                    if found:
+                        changed, promotion, new_promo = tile.piece.move(new_tile)
 
-pygame.quit()   # if king is dead, while running will be false, close window
+                        if changed:
+                            try:
+                                running = checkmate("BLACK", "WHITE", K2)
+                            except:
+                                pass
+                            white_turn = True
+                            if promotion:
+                                all_sprites.add(new_promo)
+    pygame.quit()
+    pass
