@@ -31,7 +31,7 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
 
 random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold,EUP.checker, JPN.silver]
 random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.knight, JPN.bishop,
-                    JPN.lance, EUP.queen, JPN.gold]
+                    JPN.lance, EUP.queen, JPN.gold, JPN.rook]
 random_king = [EUP.king, JPN.king]
 
 
@@ -152,7 +152,7 @@ def checkmate(player, enemy, king):
                     print("CHECK")  # print check
 
     if not king.alive():    # if king is killed
-        print("YOU LOSE")   # print you lose
+        print(enemy,"LOSES")   # print you lose
         return(False)   # return running is false (breaks game loop)
     return(True)    # else return true (king is alive)
 
