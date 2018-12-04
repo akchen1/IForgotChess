@@ -85,7 +85,7 @@ class gold(pygame.sprite.Sprite):
             for w in r:
                 try:
                     trial_tile = dc[COORD_ID[i-1+w,j+k].item(0)]
-                    if (i-1+w > -1 and j+k > -1):
+                    if (i-1+w) >= 0 and (j+k) >= 0:
                         if trial_tile.piece.player == enemy:
                             self.available_moves.append(trial_tile) 
                         elif trial_tile.piece.player == player: 
@@ -96,7 +96,7 @@ class gold(pygame.sprite.Sprite):
                     continue
             try:
                 trial_tile = dc[COORD_ID[i+b,j].item(0)]
-                if (i-1+w > -1 and j+k > -1):
+                if (i+b) >= 0:
                     if trial_tile.piece.player == enemy:
                         self.available_moves.append(trial_tile) 
                     elif trial_tile.piece.player == player: 
