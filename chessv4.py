@@ -29,13 +29,15 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']])
 # 2D Coordinate array that shows the position of each tile of the chess board
 
-random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold, EUP.checker]
+random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold]
 random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.knight, JPN.bishop,
                     JPN.lance, EUP.queen, JPN.gold]
 random_king = [EUP.king, JPN.king]
 
 
 class tile:
+    ''' tile class stores information such as its colour, position and whether the tile is empty.
+    draw_tile draws a tile onto the display'''
     def __init__(self, colour, x_pos, y_pos):
         self.full = False
         self.piece = empty()
@@ -59,8 +61,10 @@ class empty:
         pass
 
 class board:
+    ''' stores tiles into a board class where the tile label ('A1') is stored
+    as a key to a dictionary with its subsequent tile class as the value of the key'''
     def __init__(self):
-        self.dc = {}
+        self.dc = {}    # dictionary to store tiles
         self.label = [['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                       ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8'],
                       ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8'],
@@ -71,29 +75,33 @@ class board:
                       ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']]
         self.make_board()
 
-    def gimme_dictionary_lmao(self):
+    def give_dictionary(self):
+        ''' returns created dictionary'''
         return self.dc
 
     def make_board(self):
-        counter = 1
-        initalx = 0
-        initaly = 0
-        for x in self.label:
-            for term in x:
-                if counter % 2 != 0:
-                    self.dc[term] = tile(WHITE, initalx, initaly)
-                    initalx += WIDTH/8
-                    counter += 1
-                else:
-                    self.dc[term] = tile(BLACK, initalx, initaly)
-                    initalx += WIDTH/8
-                    counter += 1
+        ''' make_board() creates a white tile for odd indexes and a black tile for
+        even indexes.'''
+        counter = 1 # used to determine even or odd
+        initalx = 0 # intial x (left) coordinate for first tile
+        initaly = 0 # intial y (top) coordinate for first tile
+        for x in self.label:    # for each row
+            for term in x:  # for each column in row
+                if counter % 2 != 0:    # if odd create white tile
+                    self.dc[term] = tile(WHITE, initalx, initaly)   # make tile
+                    initalx += WIDTH/8  # increase left coordinate by width of tile
+                    counter += 1    # increase counter by 1
+                else:   # if even create black tile
+                    self.dc[term] = tile(BLACK, initalx, initaly)   # make tile
+                    initalx += WIDTH/8  # increase left coordinate by width of tile
+                    counter += 1    # increase counter by 1
 
-            initaly += HEIGHT/8
-            initalx = 0
-            counter = counter - 1
+            initaly += HEIGHT/8 # new row, move down by height of tile
+            initalx = 0 # reset x postion to beginning of row
+            counter = counter - 1   # change counter to alternate between black/white
 
     def draw_board(self):
+        ''' uses draw_tile() function to draw tiles (stored in dictionayr) onto the board'''
         for _, tile in self.dc.items():
             tile.draw_tile()
 
@@ -112,12 +120,17 @@ def find_tile(board, mouse_pos, tile_flag):
     ''' find tile will find the corresponding tile to mouse_pos, if it's the first
     iteration, the tile_flag will be on so that if an empty space is clicked, it will
     stop the loop and allow player to try again '''
-    for key, tile in board.dc.items():
+    for key, tile in board.dc.items():  # iterate through tiles
+        # if y position corresponds to a tile
         if mouse_pos[1] > tile.y_pos and mouse_pos[1] < (tile.y_pos + HEIGHT/8):
+            # if x position corresponds to a tile
             if mouse_pos[0] > tile.x_pos and mouse_pos[0] < (tile.x_pos + WIDTH/8):
+                # if tile is empty
                 if tile.piece.player == None and tile_flag:
                     return(False, None, None)
+                # if tile found return key and tile
                 return(True, key, tile)
+    # if no tile is found
     return(False, None, None)
 
 def checkmate(player, enemy, king):
@@ -127,22 +140,23 @@ def checkmate(player, enemy, king):
     moves corresponds to the enemy's kings position. If true, "check" will
     be outputed. Additinally, checkmate() checks if the the enemy king is alive.
     if dead, game loop will end. '''
-    for x in all_sprites:
-        if x.player == player:# and type(x) != type(king):
-            if x != new_tile.piece:
-                x.moveset(player, enemy, x.key, dc)
-            else:
-                x.moveset(player, enemy, new_key, dc)
-            for y in x.available_moves:
+    for x in all_sprites:   # loop through all sprites (pieces)
+        if x.player == player:  # if piece found is same as player piece
+            if x != new_tile.piece: # if piece hasn't moved
+                x.moveset(player, enemy, x.key, dc) # find moveset using old coordinates
+            else:   # if piece moved
+                x.moveset(player, enemy, new_key, dc)   # find moveset using new coordinates
+            for y in x.available_moves: # loop through all available moves
+                # if any of the available moves for a piece is on a king
                 if int(y.x_pos) == king.rect.x and int(y.y_pos) == king.rect.y:
-                    print("CHECK")
-    if not king.alive():
-        print("YOU LOSE")
-        return(False)
-    return(True)
+                    print("CHECK")  # print check
+
+    if not king.alive():    # if king is killed
+        print("YOU LOSE")   # print you lose
+        return(False)   # return running is false (breaks game loop)
+    return(True)    # else return true (king is alive)
 
 def make_pieces():
-
     p = [None]*8
     i = 1
     for x in p:  # black pawns
@@ -185,45 +199,9 @@ tile_flag = 1
 fps = 30
 clock = pygame.time.Clock()
 board = board()  # initialize board
-dc = board.gimme_dictionary_lmao()
+dc = board.give_dictionary()
 all_sprites = pygame.sprite.Group()
-
 k1,K2 = make_pieces()
-
-# # r1 = JPN.rook(board.dc["A1"], "BLACK", "A1")
-# r2 = JPN.rook(board.dc["A8"], "BLACK", "A8")
-# # R1 = JPN.rook(board.dc["H1"], "WHITE", "H1")
-#R2 = JPN.rook(board.dc["D4"], "BLACK", "D4")
-
-# k1 = JPN.king(board.dc["A5"], "BLACK", "A5")
-# K2 = JPN.king(board.dc["H5"], "WHITE", "H5")
-
-# b1 = JPN.bishop(board.dc["A3"], "BLACK", "A3")
-# # b2 = JPN.bishop(board.dc["A6"], "BLACK", "A6")
-#B1 = JPN.bishop(board.dc["D3"], "BLACK", "D3")
-#all_sprites.add(B1,R2)
-# # B2 = JPN.bishop(board.dc["H6"], "WHITE", "H6")
-
-# # q1 = EUP.queen(board.dc["A4"], "BLACK", "A4")
-# # Q1 = EUP.queen(board.dc["H4"], "WHITE", "H4")
-
-# kn1 = JPN.knight(board.dc["A2"], "BLACK", "A2")
-# # kn2 = JPN.knight(board.dc["A7"], "BLACK", "A7")
-# Kn1 = JPN.knight(board.dc["H2"], "WHITE", "H2")
-# # Kn2 = JPN.knight(board.dc["H7"], "WHITE", "H7")
-
-# s1 = JPN.silver(board.dc["F1"], "BLACK", "F1")
-# s2 = JPN.silver(board.dc["F2"], "WHITE", "F2")
-# g1 = JPN.pawn(board.dc["E4"], "BLACK", "E3")
-# g2 = JPN.pawn(board.dc["E5"], "WHITE", "E5")
-
-# l1 = JPN.lance(board.dc["F3"], "BLACK", "F3")
-# l2 = JPN.lance(board.dc["F4"], "WHITE", "F4")
-
-
-# all_sprites.add(p1, p2, p3, p4, p5, p6, p7, p8, P1, P2, P3, P4, P5, P6, P7, P8)
-#all_sprites.add(r1, r2, R1, R2, k1, K2, q1, Q1, b1, b2, B1, B2, kn1, kn2, Kn1, Kn2)
-#all_sprites.add(g1, g2, s1, s2, l1, l2, kn1, Kn1, B1, b1, k1, K2, r2, R2)
 
 running = True  # run game
 white_turn = True   # white goes first
