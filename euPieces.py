@@ -948,6 +948,7 @@ class checker(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
+        self.kill_set = {}
         self.first_move = True
         self.player = player
         self.set_position()
@@ -960,11 +961,18 @@ class checker(pygame.sprite.Sprite):
         pass
         
     def updatep(self, new_tile):
-        if new_tile.full:
-            new_tile.piece.kill()
+        if new_tile in self.kill_set:
+            self.rect.x = new_tile.x_pos
+            self.rect.y = new_tile.y_pos
+            self.kill_set[new_tile].piece.kill()
+            self.tile.full = False
+            self.tile.piece = empty()
+            self.tile = new_tile
+            self.tile.full = True
+            self.tile.piece = self
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
             return(False, False, False)
-          
+
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -984,24 +992,26 @@ class checker(pygame.sprite.Sprite):
             p = -1
 
         try:
-            if (i+p) <= 8 and (j+1) <= 8:
+            if (i+p) >= 0 and (j+1) >= 0:
                trial_tile = dc[COORD_ID[i+p,j+1].item(0)]  
             if trial_tile.full != True:
                 self.available_moves.append(trial_tile)
-            elif (i+p*2) <= 8 and (j+2) <= 8 and trial_tile.piece.player == enemy and (
+            elif (i+p*2) >= 0 and (j+2) >= 0 and trial_tile.piece.player == enemy and (
                 dc[COORD_ID[i+p*2, j+2].item(0)].full != True):
                 self.available_moves.append(dc[COORD_ID[i+p*2, j+2].item(0)])
+                self.kill_set[dc[COORD_ID[i+p*2, j+2].item(0)]] = trial_tile
         except:
             None
  
         try:
-            if (i+p) <= 8 and (j-1) <= 8:
+            if (i+p) >= 0 and (j-1) >= 0:
                trial_tile = dc[COORD_ID[i+p,j-1].item(0)]
             if trial_tile.full != True:
                 self.available_moves.append(trial_tile)
-            elif (i+p*2) <= 8 and (j-2) <= 8 and trial_tile.piece.player == enemy and (
+            elif (i+p*2) >= 0 and (j-2) >= 0 and trial_tile.piece.player == enemy and (
                 dc[COORD_ID[i+p*2, j-2].item(0)].full != True):
                 self.available_moves.append(dc[COORD_ID[i+p*2, j-2].item(0)])
+                self.kill_set[dc[COORD_ID[i+p*2, j-2].item(0)]] = trial_tile
         except:
             None
 
