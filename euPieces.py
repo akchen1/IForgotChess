@@ -929,7 +929,6 @@ class king(pygame.sprite.Sprite):
             pygame.display.update()
         pass   
     
-   
 class checker(pygame.sprite.Sprite):
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
