@@ -146,14 +146,41 @@ class pawn(pygame.sprite.Sprite):
         pass
         
     def promotion(self):
+        allowed_promotions = ['queen', 'rook', 'bishop', 'knight']
+        
         if self.player == "WHITE" and self.rect.y == 0:
-            new_class = input("select class: ")
-            return(True, new_class)
+            promote = input("Promote pawn? (y/n): ").lower()
+            if promote == 'y':
+                while promote == 'y':
+                    new_class = input("select class (queen, rook, bishop, knight): ").lower()
+                    if new_class in allowed_promotions:
+                        return(True, new_class)
+                    else:
+                        print("Invalid class")
+                        return self.promotion()
+            elif promote == 'n':
+                return(False, None)
+            else:
+                print("Invalid answer")
+                return self.promotion()
+            
         elif self.player == "BLACK" and self.rect.y == 563:
-            new_class = input("select class: ")
-            return(True, new_class)
-        else:
-            return(False,False)
+            promote = input("Promote pawn? (y/n): ").lower()
+            if promote == 'y':
+                while promote == 'y':
+                    new_class = input("select class (queen, rook, bishop, knight): ").lower()
+                    if new_class in allowed_promotions:
+                        return(True, new_class)
+                    else:
+                        print("Invalid class")
+                        return self.promotion()
+            elif promote == 'n':
+                return(False, None)
+            else:
+                print("Invalid answer")
+                return self.promotion()
+        
+        return(False,None)
     pass
 
 class bishop(pygame.sprite.Sprite):

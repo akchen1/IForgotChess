@@ -242,17 +242,23 @@ class silver(pygame.sprite.Sprite):
         pass
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_silver(pygame.sprite.Sprite):
@@ -459,17 +465,23 @@ class knight(pygame.sprite.Sprite):
         pass
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_knight(pygame.sprite.Sprite):
@@ -687,17 +699,23 @@ class lance(pygame.sprite.Sprite):
         pass
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_lance(pygame.sprite.Sprite):
@@ -1000,17 +1018,23 @@ class bishop(pygame.sprite.Sprite):
         pass
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_bishop(pygame.sprite.Sprite):
@@ -1360,17 +1384,23 @@ class rook(pygame.sprite.Sprite):
         pass 
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_rook(pygame.sprite.Sprite):
@@ -1618,17 +1648,23 @@ class pawn(pygame.sprite.Sprite):
         pass 
     def promotion(self):
         if self.player == "WHITE" and self.rect.y <= 80:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
         elif self.player == "BLACK" and self.rect.y >= 483:
-            promote = input("promote?(y/n) ")
-            if promote == "y" or promote == "yes" or promote == "Y":
+            promote = input("promote?(y/n) ").lower()
+            if promote == "y":
                 return(True)
-            else:
+            elif promote == "n":
                 return(False)
+            else:
+                print("Invalid answer")
+                return self.promotion()
     pass
 
 class P_pawn(pygame.sprite.Sprite):
