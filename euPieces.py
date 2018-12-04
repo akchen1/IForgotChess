@@ -964,6 +964,8 @@ class checker(pygame.sprite.Sprite):
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
             self.kill_set[new_tile].piece.kill()
+            self.kill_set[new_tile].full = False
+            self.kill_set[new_tile].piece = empty()
             self.tile.full = False
             self.tile.piece = empty()
             self.tile = new_tile
