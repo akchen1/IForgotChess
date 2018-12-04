@@ -423,7 +423,7 @@ class knight(pygame.sprite.Sprite):
         else:
             x = -1 
         for k in range(0,2):
-            if (i-2 > -1 and j+1-2*k > -1):
+            if (i-2*x > -1 and j+1-2*k > -1):
                 try:
                     trial_tile = dc[COORD_ID[i-2*x,j+1-2*k].item(0)]
                     if trial_tile.piece.player == enemy:
@@ -636,21 +636,32 @@ class lance(pygame.sprite.Sprite):
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         if player == "WHITE":
-            x = 1
+           for k in range(1,i[0]+1):
+                try:
+                    trial_tile = dc[COORD_ID[i-k,j].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue
         else:
-            x = -1 
-        for k in range(1,i[0]+1):
-            try:
-                trial_tile = dc[COORD_ID[i-k*x,j].item(0)]
-                if trial_tile.piece.player == enemy:
-                    self.available_moves.append(trial_tile)
-                    break
-                elif trial_tile.piece.player == player: 
-                    break
-                else: 
-                    self.available_moves.append(trial_tile)
-            except: 
-                continue
+            for k in range(1,8-i[0]):
+                try:
+                    trial_tile = dc[COORD_ID[i+k,j].item(0)]
+                    if trial_tile.piece.player == enemy:
+                        self.available_moves.append(trial_tile)
+                        break
+                    elif trial_tile.piece.player == player: 
+                        break
+                    else: 
+                        self.available_moves.append(trial_tile)
+                except: 
+                    continue 
+        
         
     def move(self, new_tile):
         if new_tile in self.available_moves:
