@@ -1154,33 +1154,54 @@ class kingchecker(pygame.sprite.Sprite):
 
     def moveset(self, player, enemy, key, dc):
         self.available_moves = []
-        p = 1
         i, j = np.where(COORD_ID == key) 
-        for k in range(1,3):
-            p = (-1)**k
-            try: 
-                if (i+p) >= 0 and (j+1) >= 0:
-                    trial_tile = dc[COORD_ID[i+p,j+1].item(0)]  
-                    if trial_tile.full != True:
-                        self.available_moves.append(trial_tile)
-                    elif (i+p*2) >= 0 and (j+2) >= 0 and trial_tile.piece.player == enemy and (
-                        dc[COORD_ID[i+p*2, j+2].item(0)].full != True): # jump
-                        self.available_moves.append(dc[COORD_ID[i+p*2, j+2].item(0)])
-                        self.kill_set[dc[COORD_ID[i+p*2, j+2].item(0)]] = trial_tile
-            except:
-                None
- 
-            try:
-                if (i+p) >= 0 and (j-1) >= 0:
-                    trial_tile = dc[COORD_ID[i+p,j-1].item(0)]
-                    if trial_tile.full != True:
-                        self.available_moves.append(trial_tile)
-                elif (i+p*2) >= 0 and (j-2) >= 0 and trial_tile.piece.player == enemy and (
-                    dc[COORD_ID[i+p*2, j-2].item(0)].full != True): # jump
-                    self.available_moves.append(dc[COORD_ID[i+p*2, j-2].item(0)])
-                    self.kill_set[dc[COORD_ID[i+p*2, j-2].item(0)]] = trial_tile
-            except:
-                None
+        try: #downright
+            if (i+1) > -1 and (j+1) > -1:
+               trial_tile = dc[COORD_ID[i+1,j+1].item(0)]  
+            if trial_tile.full != True:
+                self.available_moves.append(trial_tile)
+            elif (i+2) > -1 and (j+2) > -1 and trial_tile.piece.player == enemy and (
+                dc[COORD_ID[i+2, j+2].item(0)].full != True):
+                self.available_moves.append(dc[COORD_ID[i+2, j+2].item(0)])
+                self.kill_set[dc[COORD_ID[i+2, j+2].item(0)]] = trial_tile
+        except:
+            None
+
+        try: #downleft
+            if (i+1) > -1 and (j-1) > -1:
+               trial_tile = dc[COORD_ID[i+1,j-1].item(0)]  
+            if trial_tile.full != True:
+                self.available_moves.append(trial_tile)
+            elif (i+2) > -1 and (j-2) > -1 and trial_tile.piece.player == enemy and (
+                dc[COORD_ID[i+2, j-2].item(0)].full != True):
+                self.available_moves.append(dc[COORD_ID[i+2, j-2].item(0)])
+                self.kill_set[dc[COORD_ID[i+2, j-2].item(0)]] = trial_tile
+        except:
+            None
+        
+        try: #upright
+            if (i-1) > -1 and (j+1) > -1:
+               trial_tile = dc[COORD_ID[i-1,j+1].item(0)]  
+            if trial_tile.full != True:
+                self.available_moves.append(trial_tile)
+            elif (i-2) > -1 and (j+2) > -1 and trial_tile.piece.player == enemy and (
+                dc[COORD_ID[i-2, j+2].item(0)].full != True):
+                self.available_moves.append(dc[COORD_ID[i-2, j+2].item(0)])
+                self.kill_set[dc[COORD_ID[i-2, j+2].item(0)]] = trial_tile
+        except:
+            None
+
+        try: #upleft
+            if (i-1) > -1 and (j-1) > -1:
+               trial_tile = dc[COORD_ID[i-1,j-1].item(0)]  
+            if trial_tile.full != True:
+                self.available_moves.append(trial_tile)
+            elif (i-2) > -1 and (j-2) > -1 and trial_tile.piece.player == enemy and (
+                dc[COORD_ID[i-2, j-2].item(0)].full != True):
+                self.available_moves.append(dc[COORD_ID[i-2, j-2].item(0)])
+                self.kill_set[dc[COORD_ID[i-2, j-2].item(0)]] = trial_tile
+        except:
+            None    
 
     def move(self, new_tile):
         if new_tile in self.available_moves:
