@@ -3,13 +3,15 @@ import math
 import random
 import numpy as np
 
-pygame.init()
-pygame.mixer.init()     # Initiate the pygame module
+pygame.init()   # Initiate the pygame module
+   
 
-WHITE = (232, 235, 239)
-BLACK = (125, 135, 150)
-HEIGHT = 644
-WIDTH = 644
+WHITE = (232, 235, 239) # "White" tiles for the board
+BLACK = (125, 135, 150) # "Black" tiles for the board
+HEIGHT = 644    # Height of window
+WIDTH = 644     # Width of window
+
+
 display = pygame.display.set_mode((WIDTH, HEIGHT), pygame.SRCALPHA)
 # Declare global variables of color color and determines the game window size
 
@@ -29,6 +31,7 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']])
 # 2D Coordinate array that shows the position of each tile of the chess board
 
+# List of different pieces of different value to place onto the board
 random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold,EUP.checker, JPN.silver]
 random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.knight, JPN.bishop,
                     JPN.lance, EUP.queen, JPN.gold, JPN.rook]
@@ -39,15 +42,16 @@ class tile:
     ''' tile class stores information such as its colour, position and whether the tile is empty.
     draw_tile draws a tile onto the display'''
     def __init__(self, colour, x_pos, y_pos):
-        self.full = False
-        self.piece = empty()
-        self.colour = colour
-        self.x_pos = x_pos
-        self.y_pos = y_pos
-        self.rect = pygame.Rect(self.x_pos, self.y_pos, WIDTH/8, HEIGHT/8)
+        self.full = False   # default tile is empty (Full == False)
+        self.piece = empty()    
+        self.colour = colour    # colour of tile
+        self.x_pos = x_pos      # top of tile
+        self.y_pos = y_pos      # left side of tile
+        self.rect = pygame.Rect(self.x_pos, self.y_pos, WIDTH/8, HEIGHT/8)  # create tile with pygame rect function
 
     def draw_tile(self):
-        pygame.draw.rect(display, self.colour, self.rect)  # (x,y,xsize,ysize)
+        ''' draws tile onto pygame window '''
+        pygame.draw.rect(display, self.colour, self.rect)  # draw the tile
 
 class empty:
     def __init__(self):
@@ -164,51 +168,50 @@ def checkmate(player, enemy, king):
     return(True)    # else return true (king is alive)
 
 def make_pieces():
-    p = [None]*8
-    i = 1
-    for x in p:  # black pawns
-        key = "B{}"
-        key = key.format(i)
+    i = 1   # initial tile coordinate (eg B1 , i=1)
+    for x in range(0, 8):  # black pieces
+        key = "B{}"     # start a second row for pawns
+        key = key.format(i) # i is the column number
+        # pick a random pawn from pawn list and place it on the tile corresponing to the key
         x = random.choice(random_pawn)(board.dc[key], "BLACK", key)
-        all_sprites.add(x)
-        key = "A{}"
-        key = key.format(i)
-        if key == "A5":
-            k1 = EUP.king(board.dc["A5"], "BLACK", "A5")
-            all_sprites.add(k1)
-            i += 1
+        all_sprites.add(x)  # add created sprite to sprite list
+        key = "A{}"     # start first row for "exclusive" pieces
+        key = key.format(i) # column number
+        if key == "A5":     # tile "A5" is reserved for king
+            k1 = EUP.king(board.dc["A5"], "BLACK", "A5")    # create king
+            all_sprites.add(k1) # add king to sprite group
+            i += 1  # next column
             continue
-        x = random.choice(random_exclusive)(board.dc[key], "BLACK", key)
-        all_sprites.add(x)
-        i += 1
+        x = random.choice(random_exclusive)(board.dc[key], "BLACK", key)    # next piece
+        all_sprites.add(x)  # add next piece
+        i += 1  # new column
 
-    i = 1
-    p = [None]*8
-    for x in p:  # white pawns
-        key = "G{}"
-        key = key.format(i)
+    i = 1   # start at column 1 for white pieces
+    for x in range(0, 8):  # white pieces
+        key = "G{}" # Row "G"
+        key = key.format(i) # create key (G{i}; i is column number)
+        # select random piece from pawn list
         x = random.choice(random_pawn)(board.dc[key], "WHITE", key)
-        all_sprites.add(x)
-        key = "H{}"
-        key = key.format(i)
-        if key == "H5":
-            K2 = EUP.king(board.dc["H5"], "WHITE", "H5")
-            all_sprites.add(K2)
-            i += 1
+        all_sprites.add(x)  # add piece to sprite group
+        key = "H{}" # Row "H"
+        key = key.format(i) # create key with i as column number
+        if key == "H5": # Reserved tile for king
+            K2 = EUP.king(board.dc["H5"], "WHITE", "H5")    # create king
+            all_sprites.add(K2) # add king to sprite group
+            i += 1  # next column
             continue
-        x = random.choice(random_exclusive)(board.dc[key], "WHITE", key)
-        all_sprites.add(x)
-        i += 1
-    return(k1,K2)
-
+        x = random.choice(random_exclusive)(board.dc[key], "WHITE", key)    # create next piece
+        all_sprites.add(x)  # add piece to sprite group
+        i += 1  # next column
+    return(k1,K2)   # retun kings (black, white) to check for checkmate
 
 tile_flag = 1
 fps = 30
 clock = pygame.time.Clock()
 board = board()  # initialize board
-dc = board.give_dictionary()
-all_sprites = pygame.sprite.Group()
-k1,K2 = make_pieces()
+dc = board.give_dictionary()    # dictionary containing all tiles
+all_sprites = pygame.sprite.Group() # sprite group
+k1,K2 = make_pieces()   # make pieces onto board, return black king and white king
 
 running = True  # run game
 white_turn = True   # white goes first
@@ -251,20 +254,19 @@ if __name__ == "__main__":
                                 all_sprites.add(new_promo)  # add new promoted piece to sprite group
 
                 elif found and tile.piece.player == "BLACK" and not white_turn:
-                    tile.piece.highlight(key, tile, dc)
+                    tile.piece.highlight(key, tile, dc) # highlight available moves
                     wait_button()   # wait for input for new location
-                    new_mouse_pos = pygame.mouse.get_pos()
+                    new_mouse_pos = pygame.mouse.get_pos()  # get new mouse position
                     found, new_key, new_tile = find_tile(
-                        board, new_mouse_pos, not tile_flag)
+                        board, new_mouse_pos, not tile_flag)    # locate new tile
                     if found:
-                        changed, promotion, new_promo = tile.piece.move(new_tile)
+                        changed, promotion, new_promo = tile.piece.move(new_tile)   # move piece to new tile
                         if changed:
                             try:
-                                running = checkmate("BLACK", "WHITE", K2)
+                                running = checkmate("BLACK", "WHITE", K2)   # check if checkmate
                             except:
                                 pass
-                            white_turn = True
+                            white_turn = True   # switch turns
                             if promotion:
-                                all_sprites.add(new_promo)
+                                all_sprites.add(new_promo)  # add promoted piece to sprite group
     pygame.quit()
-    pass
