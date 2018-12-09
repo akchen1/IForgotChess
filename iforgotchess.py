@@ -180,7 +180,7 @@ def checkmate(player, enemy, king):
                         y[1].y_pos) == king.rect.y:
                     print("CHECK")  # print check
         except:
-            None
+            pass
 
     if not king.alive():    # if king is killed
         print(enemy, "LOSES")   # print you lose
