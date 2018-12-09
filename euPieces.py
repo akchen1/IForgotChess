@@ -743,7 +743,6 @@ class knight(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
         
     def set_position(self):
@@ -853,34 +852,33 @@ class knight(pygame.sprite.Sprite):
             pygame.display.update()
 
 class king(pygame.sprite.Sprite):
+    ''' knight class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         self.key = key
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/kingblack.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/kingwhite.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
+        self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
         pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
         pass
         
     def updatep(self, new_tile):
+        ''' updates piece. This involves killing and movement. 
+        Same as updatep in class pawn without the promotion aspect'''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -896,8 +894,10 @@ class king(pygame.sprite.Sprite):
             self.tile.piece = self
             return (True, False,False)
         
-
     def moveset(self, player, enemy, key, dc):
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key) 
         for k in range(-1,2):
@@ -914,19 +914,18 @@ class king(pygame.sprite.Sprite):
                 except: 
                     continue
 
-
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -937,40 +936,34 @@ class king(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
-            pygame.display.update()
-        pass   
+            pygame.display.update() 
     
 class checker(pygame.sprite.Sprite):
+    ''' checker class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         self.key = key
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/blackchecker.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([0,0,0])
         else:
             self.image = pygame.image.load('pieces/whitechecker.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
+        self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
         self.kill_set = {}
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
-        
+
     def updatep(self, new_tile):
+        ''' updates piece. This involves killing and movement and promotion '''
         if new_tile in self.kill_set:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -1016,8 +1009,11 @@ class checker(pygame.sprite.Sprite):
                 self.tile.piece = self
             return(True, False, False)
         
-
     def moveset(self, player, enemy, key, dc):
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. Adititionally, if the checker is able to jump over a piece
+        the move will be appended into kill set '''
         self.available_moves = []
         p = 1
         i, j = np.where(COORD_ID == key) 
@@ -1049,16 +1045,17 @@ class checker(pygame.sprite.Sprite):
             None
 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False 
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
         
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1069,49 +1066,45 @@ class checker(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, piece will promote '''
+
         if self.player == "WHITE" and self.rect.y == 0:
             return(True, "kingchecker")
         elif self.player == "BLACK" and self.rect.y == 563:
             return(True, "kingchecker")
         else:
             return(False,False)
-    pass
 
 class kingchecker(pygame.sprite.Sprite):
+    ''' king checker class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
         self.key = key
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/blackcheckerking.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([0,0,0])
         else:
             self.image = pygame.image.load('pieces/whitecheckerking.png').convert_alpha()
-            self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
+        self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
         self.kill_set = {}
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updates piece. This involves killing and movement and promotion '''
         if new_tile in self.kill_set:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -1136,8 +1129,11 @@ class kingchecker(pygame.sprite.Sprite):
             self.tile.piece = self
             return (True, False,False)
         
-
     def moveset(self, player, enemy, key, dc):
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. Adititionally, if the checker is able to jump over a piece
+        the move will be appended into kill set '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key) 
         try: #downright
@@ -1189,16 +1185,17 @@ class kingchecker(pygame.sprite.Sprite):
             None    
 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
         
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1209,6 +1206,4 @@ class kingchecker(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass

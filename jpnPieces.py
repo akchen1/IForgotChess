@@ -24,6 +24,7 @@ class empty:
         pass
         
 class gold(pygame.sprite.Sprite):
+    ''' gold class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -32,29 +33,24 @@ class gold(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/gold-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/gold-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
+
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
-        
+      
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
-        
+    
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -70,11 +66,12 @@ class gold(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
+ 
         for k in range(-1,2):
             if player == "WHITE":
                 r = range(0,2)
@@ -107,15 +104,17 @@ class gold(pygame.sprite.Sprite):
                 continue
                 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False 
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -126,11 +125,10 @@ class gold(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
-    
+   
 class silver(pygame.sprite.Sprite):
+    ''' silver class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -139,29 +137,24 @@ class silver(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/silver-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/silver-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
-        
+
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -183,11 +176,12 @@ class silver(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
+
         for k in range(-1,2):
             if player == "BLACK":
                 b = 1
@@ -219,14 +213,17 @@ class silver(pygame.sprite.Sprite):
                 continue
                 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -237,10 +234,12 @@ class silver(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -259,9 +258,9 @@ class silver(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_silver(pygame.sprite.Sprite):
+    ''' promoted silver class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -269,30 +268,24 @@ class P_silver(pygame.sprite.Sprite):
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/P_silver-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image = pygame.transform.flip(self.image, 0, 1)
-          #  self.image.set_colorkey([255,255,255])
-            
+            self.image = pygame.transform.flip(self.image, 0, 1)        
         else:
             self.image = pygame.image.load('pieces/P_silver-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -308,11 +301,11 @@ class P_silver(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
         for k in range(-1,2):
             if player == "WHITE":
                 r = range(0,2)
@@ -345,15 +338,17 @@ class P_silver(pygame.sprite.Sprite):
                 continue
                 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False 
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -364,11 +359,10 @@ class P_silver(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
 class knight(pygame.sprite.Sprite):
+    ''' knight class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -376,29 +370,25 @@ class knight(pygame.sprite.Sprite):
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/knight-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image = pygame.transform.flip(self.image, 0, 1)
-          #  self.image.set_colorkey([255,255,255])
-            
+            self.image = pygame.transform.flip(self.image, 0, 1)  
         else:
             self.image = pygame.image.load('pieces/knight-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
-        
+
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -420,8 +410,9 @@ class knight(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         if player == "WHITE":
@@ -442,14 +433,17 @@ class knight(pygame.sprite.Sprite):
                     continue
         
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -460,10 +454,12 @@ class knight(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -482,9 +478,9 @@ class knight(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_knight(pygame.sprite.Sprite):
+    ''' promoted knight class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -493,29 +489,23 @@ class P_knight(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/P_knight-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/P_knight-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -531,11 +521,11 @@ class P_knight(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
         for k in range(-1,2):
             if player == "WHITE":
                 r = range(0,2)
@@ -568,14 +558,17 @@ class P_knight(pygame.sprite.Sprite):
                 continue
         
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -586,11 +579,11 @@ class P_knight(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
+
 
 class lance(pygame.sprite.Sprite):
+    ''' lance class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -599,29 +592,24 @@ class lance(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/lance-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/lance-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -643,8 +631,9 @@ class lance(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         if player == "WHITE":
@@ -673,17 +662,19 @@ class lance(pygame.sprite.Sprite):
                         self.available_moves.append(trial_tile)
                 except: 
                     continue 
-        
-        
+                
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -694,10 +685,12 @@ class lance(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -716,9 +709,9 @@ class lance(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_lance(pygame.sprite.Sprite):
+    ''' Promoted lance class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -727,29 +720,23 @@ class P_lance(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/P_lance-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/P_lance-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
-        
+
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -765,11 +752,12 @@ class P_lance(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
+        
         for k in range(-1,2):
             if player == "WHITE":
                 r = range(0,2)
@@ -802,14 +790,17 @@ class P_lance(pygame.sprite.Sprite):
                 continue
         
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -820,11 +811,10 @@ class P_lance(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
 class bishop(pygame.sprite.Sprite):
+    ''' bishop class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -833,27 +823,24 @@ class bishop(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/bishop-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-         #   self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/bishop-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-          #  self.image.set_colorkey([255,255,255])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
-        
+       
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -874,10 +861,10 @@ class bishop(pygame.sprite.Sprite):
                 self.tile.piece = self
             return(True, False, False)
         
-
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
 
@@ -975,7 +962,6 @@ class bishop(pygame.sprite.Sprite):
                         self.available_moves.append(trial_tile)
                 except: 
                     continue
-            pass
         else:
             for k in range(1,8-i[0]):
                 try:
@@ -989,20 +975,19 @@ class bishop(pygame.sprite.Sprite):
                         self.available_moves.append(trial_tile)
                 except: 
                     continue
-            pass
 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1013,10 +998,12 @@ class bishop(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -1035,9 +1022,9 @@ class bishop(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_bishop(pygame.sprite.Sprite):
+    ''' Promoted bishop class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -1046,27 +1033,23 @@ class P_bishop(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/P_bishop-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-         #   self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/P_bishop-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-          #  self.image.set_colorkey([255,255,255])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -1082,8 +1065,9 @@ class P_bishop(pygame.sprite.Sprite):
             return(True, False, False)
         
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
 
@@ -1181,7 +1165,7 @@ class P_bishop(pygame.sprite.Sprite):
                         self.available_moves.append(trial_tile)
                 except: 
                     continue
-            pass
+
         else:
             for k in range(1,8-i[0]):
                 try:
@@ -1195,7 +1179,6 @@ class P_bishop(pygame.sprite.Sprite):
                         self.available_moves.append(trial_tile)
                 except: 
                     continue
-            pass
         
         for k in [-1,1]:
             try:
@@ -1221,20 +1204,18 @@ class P_bishop(pygame.sprite.Sprite):
             except: 
                 continue
             
-
-
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1245,11 +1226,10 @@ class P_bishop(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
 class rook(pygame.sprite.Sprite):
+    ''' rook class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -1258,27 +1238,24 @@ class rook(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/rook-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-            self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/rook-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
 
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
     
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
     
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -1299,10 +1276,10 @@ class rook(pygame.sprite.Sprite):
                 self.tile.piece = self
             return(True, False, False)
        
-
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
 
@@ -1358,17 +1335,19 @@ class rook(pygame.sprite.Sprite):
                     self.available_moves.append(trial_tile)
             except: 
                 continue
-        pass
+
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1379,10 +1358,12 @@ class rook(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass 
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -1401,9 +1382,9 @@ class rook(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_rook(pygame.sprite.Sprite):
+    ''' Promoted rook class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -1412,27 +1393,23 @@ class P_rook(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/P_rook-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-            self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/P_rook-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-            self.image.set_colorkey([255,255,255])
 
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
     
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
     
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -1448,10 +1425,10 @@ class P_rook(pygame.sprite.Sprite):
             self.tile.piece = self
             return (True, False,False)
        
-
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
 
@@ -1520,19 +1497,20 @@ class P_rook(pygame.sprite.Sprite):
                     else: 
                         self.available_moves.append(trial_tile)
                 except: 
-                    continue 
+                    continue
+
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1543,43 +1521,37 @@ class P_rook(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
 class pawn(pygame.sprite.Sprite):
+    ''' pawn class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
         self.player = player
         if self.player == "BLACK":
             self.image = pygame.image.load('pieces/pawn-jpn.png').convert_alpha()
-            #self.image.set_colorkey((0,255,0))
-            
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
             
         else:
             self.image = pygame.image.load('pieces/pawn-jpn.png').convert_alpha()
-            #self.image.set_colorkey((0,255,0))
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             
         self.rect = self.image.get_rect()
-        
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
     
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
     
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing,
+        and promotion. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -1601,15 +1573,15 @@ class pawn(pygame.sprite.Sprite):
             return(True, False, False)
        
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         if player == "WHITE":
             x = 1
         else:
             x = -1 
-        
         try:
             trial_tile = dc[COORD_ID[i-1*x,j].item(0)]
             if trial_tile.piece.player == enemy:
@@ -1622,17 +1594,17 @@ class pawn(pygame.sprite.Sprite):
             pass
         
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1643,10 +1615,12 @@ class pawn(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass 
+
     def promotion(self):
+        ''' checks if the piece is a specified location on the board.
+        if it is, player will be asked if they want to promote and to what
+        class. Invalid input will cause function to recurse '''
         if self.player == "WHITE" and self.rect.y <= 80:
             promote = input("promote?(y/n) ").lower()
             if promote == "y":
@@ -1665,9 +1639,9 @@ class pawn(pygame.sprite.Sprite):
             else:
                 print("Invalid answer")
                 return self.promotion()
-    pass
 
 class P_pawn(pygame.sprite.Sprite):
+    ''' Promoted pawn class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.key = key
@@ -1676,29 +1650,23 @@ class P_pawn(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/P_pawn-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-          #  self.image.set_colorkey([255,255,255])
-            
         else:
             self.image = pygame.image.load('pieces/P_pawn-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-         #   self.image = pygame.transform.flip(self.image, 0, 1)
-           # self.image.set_colorkey([0,0,0])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
+        ''' updatep updates the piece. This involves their movement, killing. '''
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
@@ -1714,11 +1682,11 @@ class P_pawn(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        """ reciprocal of white movement """
-        """ moves down """
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)    # uses numpy array to find 2D-index of key
-        # kill testing
         for k in range(-1,2):
             if player == "WHITE":
                 r = range(0,2)
@@ -1751,15 +1719,17 @@ class P_pawn(pygame.sprite.Sprite):
                 continue
                 
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False 
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
 
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1770,11 +1740,10 @@ class P_pawn(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
 
 class king(pygame.sprite.Sprite):
+    ''' king class as a pygame sprite '''
     def __init__(self, tile, player, key):
         pygame.sprite.Sprite.__init__(self)
         self.player = player
@@ -1783,32 +1752,26 @@ class king(pygame.sprite.Sprite):
             self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
             self.image = pygame.transform.flip(self.image, 0, 1)
-        #   self.image.set_colorkey([255,255,255])
         else:
             self.image = pygame.image.load('pieces/king-jpn.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (int(WIDTH/8),int(HEIGHT/8)))
-        #   self.image.set_colorkey([255,255,255])
         
         self.rect = self.image.get_rect()
         self.tile = tile
         self.available_moves = []
-        self.first_move = True
-        self.player = player
         self.set_position()
-        pass
         
     def set_position(self):
+        ''' sets original position for piece when game starts '''
         (self.rect.left, self.rect.top) = (self.tile.x_pos, self.tile.y_pos)
         self.tile.full = True
         self.tile.piece = self 
-        pass
         
     def updatep(self, new_tile):
         if new_tile.full:
             new_tile.piece.kill()
         if self.rect.x == new_tile.x_pos and self.rect.y == new_tile.y_pos:
             return(False, False, False)
-          
         else:
             self.rect.x = new_tile.x_pos
             self.rect.y = new_tile.y_pos
@@ -1819,8 +1782,10 @@ class king(pygame.sprite.Sprite):
             self.tile.piece = self
             return (True, False,False)
         
-
     def moveset(self, player, enemy, key, dc):
+        ''' finds possible moves for piece and appends it to a list. Finds a possible
+        tile it can move to and if it satisfies all the conditions it will be added
+        to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key) 
         for k in range(-1,2):
@@ -1837,18 +1802,18 @@ class king(pygame.sprite.Sprite):
                 except: 
                     continue
 
-
     def move(self, new_tile):
+        ''' move function checks if tile selected is in available moves
+        then calles updatep function '''
         if new_tile in self.available_moves:
             changed, promoted, new_piece = self.updatep(new_tile)
-            self.first_move = False
-            
-            
             return (changed, promoted, new_piece)
         else:
             return (False, False, False)
-        pass
+
     def highlight(self, key, tile, dc):
+        ''' highlights possible moves player can choose from, using
+        moveset '''
         self.key = key
         if tile.piece.player == "BLACK":
             self.moveset("BLACK", "WHITE", key, dc)
@@ -1859,6 +1824,4 @@ class king(pygame.sprite.Sprite):
             p.set_alpha(100)    # transparency 
             p.fill((153, 204, 255)) # colour
             display.blit(p,i.rect)
-            #p = pygame.draw.rect(display, (230, 90, 40, 50), i.rect)
             pygame.display.update()
-        pass
