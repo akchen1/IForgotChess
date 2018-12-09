@@ -33,7 +33,7 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
 
 # List of different pieces of different value to place onto the board
 random_pawn = [EUP.pawn, JPN.pawn, EUP.pawn, EUP.pawn, JPN.pawn, JPN.gold,
-                EUP.checker, JPN.silver]
+               EUP.checker, JPN.silver]
 random_exclusive = [EUP.bishop, EUP.knight, EUP.rook, JPN.knight, JPN.bishop,
                     JPN.lance, EUP.queen, JPN.gold, JPN.rook]
 random_king = [EUP.king, JPN.king]
@@ -42,6 +42,7 @@ random_king = [EUP.king, JPN.king]
 class tile:
     ''' tile class stores information such as its colour, position and whether
     the tile is empty. draw_tile draws a tile onto the display'''
+
     def __init__(self, colour, x_pos, y_pos):
         self.full = False   # default tile is empty (Full == False)
         self.piece = empty()
@@ -49,7 +50,7 @@ class tile:
         self.x_pos = x_pos      # top of tile
         self.y_pos = y_pos      # left side of tile
         # create tile with pygame rect function
-        self.rect = pygame.Rect(self.x_pos, self.y_pos, WIDTH/8, HEIGHT/8)
+        self.rect = pygame.Rect(self.x_pos, self.y_pos, WIDTH / 8, HEIGHT / 8)
 
     def draw_tile(self):
         ''' draws tile onto pygame window '''
@@ -57,6 +58,7 @@ class tile:
 
 
 class empty:
+
     def __init__(self):
         self.full = False
         self.player = None
@@ -72,6 +74,7 @@ class board:
     ''' stores tiles into a board class where the tile label ('A1')
     is stored as a key to a dictionary with its subsequent tile
     class as the value of the key'''
+
     def __init__(self):
         self.dc = {}    # dictionary to store tiles
         self.label = [['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
@@ -99,15 +102,15 @@ class board:
                 if counter % 2 != 0:    # if odd create white tile
                     self.dc[term] = tile(WHITE, initalx, initaly)   # make tile
                     # increase left coordinate by width of tile
-                    initalx += WIDTH/8
+                    initalx += WIDTH / 8
                     counter += 1    # increase counter by 1
                 else:   # if even create black tile
                     self.dc[term] = tile(BLACK, initalx, initaly)   # make tile
                     # increase left coordinate by width of tile
-                    initalx += WIDTH/8
+                    initalx += WIDTH / 8
                     counter += 1    # increase counter by 1
 
-            initaly += HEIGHT/8  # new row, move down by height of tile
+            initaly += HEIGHT / 8  # new row, move down by height of tile
             initalx = 0  # reset x postion to beginning of row
             counter = counter - 1   # alternate between black/white
 
@@ -137,11 +140,13 @@ def find_tile(board, mouse_pos, tile_flag):
     clicked, it will stop the loop and allow player to try again '''
     for key, tile in board.dc.items():  # iterate through tiles
         # if y position corresponds to a tile
-        if mouse_pos[1] > tile.y_pos and mouse_pos[1] < (tile.y_pos + HEIGHT/8):
+        if mouse_pos[1] > tile.y_pos and mouse_pos[
+                1] < (tile.y_pos + HEIGHT / 8):
             # if x position corresponds to a tile
-            if mouse_pos[0] > tile.x_pos and mouse_pos[0] < (tile.x_pos + WIDTH/8):
+            if mouse_pos[0] > tile.x_pos and mouse_pos[
+                    0] < (tile.x_pos + WIDTH / 8):
                 # if tile is empty
-                if tile.piece.player == None and tile_flag:
+                if tile.piece.player is None and tile_flag:
                     return(False, None, None)
                 # if tile found return key and tile
                 return(True, key, tile)
@@ -158,7 +163,7 @@ def checkmate(player, enemy, king):
     if dead, game loop will end. '''
     for x in all_sprites:   # loop through all sprites (pieces)
         # if piece found is same as player piece
-        if x.player == player and type(x) != type(king):
+        if x.player == player and not isinstance(x, type(king)):
             if x != new_tile.piece:  # if piece hasn't moved
                 # find moveset using old coordinates
                 x.moveset(player, enemy, x.key, dc)
@@ -171,7 +176,8 @@ def checkmate(player, enemy, king):
                     print("CHECK")  # print check
         try:
             for y in x.kill_set.items():
-                if int(y[1].x_pos) == king.rect.x and int(y[1].y_pos) == king.rect.y:
+                if int(y[1].x_pos) == king.rect.x and int(
+                        y[1].y_pos) == king.rect.y:
                     print("CHECK")  # print check
         except:
             None
@@ -244,7 +250,8 @@ if __name__ == "__main__":
         pygame.display.update()  # update display
         pygame.display.flip()   # update display
 
-        for event in pygame.event.get():  # if close button is hit, close window
+        for event in pygame.event.get(
+        ):  # if close button is hit, close window
             if event.type == pygame.QUIT:
                 running = False
             # if player clicked on something
@@ -268,7 +275,8 @@ if __name__ == "__main__":
                         board, new_mouse_pos, not tile_flag)
                     if found:   # if tile is found
                         # move piece to new location and check promotion
-                        changed, promotion, new_promo = tile.piece.move(new_tile)
+                        changed, promotion, new_promo = tile.piece.move(
+                            new_tile)
                         if changed:  # if the move is successful
                             try:    # see if enemy king is in check
                                 running = checkmate("WHITE", "BLACK", k1)
@@ -289,7 +297,8 @@ if __name__ == "__main__":
                         board, new_mouse_pos, not tile_flag)  # locate new tile
                     if found:
                         # move piece to new tile
-                        changed, promotion, new_promo = tile.piece.move(new_tile)
+                        changed, promotion, new_promo = tile.piece.move(
+                            new_tile)
                         if changed:
                             try:
                                 # check if checkmate
