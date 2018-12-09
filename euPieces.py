@@ -11,7 +11,8 @@ COORD_ID = np.array([['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'],
                      ['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7', 'E8'],
                      ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8'],
                      ['G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8'],
-                     ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']], dtype=str)
+                     ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8']],
+                     dtype=str)
 # COORD_ID is just a special numpy array that makes working in 2D easier
 
 
@@ -89,9 +90,9 @@ class pawn(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         # uses numpy array to find 2D-index of key
         i, j = np.where(COORD_ID == key)
@@ -103,7 +104,8 @@ class pawn(pygame.sprite.Sprite):
             try:
                 # possible tile
                 trial_tile = dc[COORD_ID[i + p, j + (-1)**k].item(0)]
-                if trial_tile.piece.player == enemy:    # if tile is occupied by enemy
+                # if tile is occupied by enemy
+                if trial_tile.piece.player == enemy:
                     self.available_moves.append(trial_tile)  # append to list
             except:
                 continue
@@ -116,7 +118,7 @@ class pawn(pygame.sprite.Sprite):
                 try:
                     # possible tile for it to move
                     trial_tile = dc[COORD_ID[i + p, j].item(0)]
-                    if trial_tile.full != True:         # only works for pawn since checks if space above full
+                    if trial_tile.full != True:
                         self.available_moves.append(trial_tile)
                     else:
                         break
@@ -128,7 +130,7 @@ class pawn(pygame.sprite.Sprite):
                 p = p * (-1)
             try:
                 trial_tile = dc[COORD_ID[i + p, j].item(0)]
-                if trial_tile.full != True:         # only works for pawn since checks if space above full
+                if trial_tile.full != True:
                     self.available_moves.append(trial_tile)
             except:
                 pass
@@ -171,7 +173,8 @@ class pawn(pygame.sprite.Sprite):
                 while promote == 'y':
                     new_class = input(
                         "select class (queen, rook, bishop, knight): ").lower()
-                    if new_class in allowed_promotions:  # check if player input is allowed
+                    # check if player input is allowed
+                    if new_class in allowed_promotions:
                         return(True, new_class)
                     else:
                         print("Invalid class")
@@ -188,7 +191,8 @@ class pawn(pygame.sprite.Sprite):
                 while promote == 'y':
                     new_class = input(
                         "select class (queen, rook, bishop, knight): ").lower()
-                    if new_class in allowed_promotions:  # check if player input is valid
+                    # check if player input is valid
+                    if new_class in allowed_promotions:
                         return(True, new_class)
                     else:   # invalid player input
                         print("Invalid class")
@@ -249,9 +253,9 @@ class bishop(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         # uses numpy array to find 2D-index of key
         i, j = np.where(COORD_ID == key)
@@ -436,9 +440,9 @@ class rook(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
 
@@ -566,9 +570,9 @@ class queen(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         # uses numpy array to find 2D-index of key
         i, j = np.where(COORD_ID == key)
@@ -805,9 +809,9 @@ class knight(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
 
@@ -936,9 +940,9 @@ class king(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. '''
+        ''' finds possible moves for piece and appends it to a list. Finds 
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         for k in range(-1, 2):
@@ -1056,10 +1060,10 @@ class checker(pygame.sprite.Sprite):
             return(True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. Adititionally, if the checker is able to jump over a piece
-        the move will be appended into kill set '''
+        ''' finds possible moves for piece and appends it to a list. Finds
+        a possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. Adititionally, if the checker is able
+        to jump over a piece the move will be appended into kill set '''
         self.available_moves = []
         p = 1
         i, j = np.where(COORD_ID == key)
@@ -1185,10 +1189,10 @@ class kingchecker(pygame.sprite.Sprite):
             return (True, False, False)
 
     def moveset(self, player, enemy, key, dc):
-        ''' finds possible moves for piece and appends it to a list. Finds a possible
-        tile it can move to and if it satisfies all the conditions it will be added
-        to the moveset. Adititionally, if the checker is able to jump over a piece
-        the move will be appended into kill set '''
+        ''' finds possible moves for piece and appends it to a list. Finds a
+        possible tile it can move to and if it satisfies all the conditions
+        it will be added to the moveset. Adititionally, if the checker is able
+        to jump over a piece the move will be appended into kill set '''
         self.available_moves = []
         i, j = np.where(COORD_ID == key)
         try:  # downright
